@@ -1,0 +1,3 @@
+#!/bin/bash
+git fetch; git log origin --since="1 day ago"
+# https://stackoverflow.com/questions/5113425/how-to-make-git-log-show-all-of-todays-commits#31153264
