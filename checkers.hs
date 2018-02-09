@@ -4,33 +4,36 @@ import Control.Exception
 import System.Random
 import Debug.Trace
 
-data Square = Black | White deriving (Show,Eq)
+data Square = Black | White | PlayerRed PType | PlayerWhite PType deriving (Show,Eq)
 
-data Pcolor = PBlack | PWhite deriving (Show)
-data PType = Normal | Queen deriving (Show)
-data Piece = Piece Pcolor PType deriving (Show)
+data PType = Normal | Queen deriving (Show,Eq)
+
 
 type Board = [Square]
 
 type Position = (Int, Int)
 
-type Player = String
-
 type Move = (Int,Int)
 
+posBoard [] = []
+posBoard (x:xs) = posboards (x:xs) (0,0)
 
-
+posboards (x:xs) (a,b) = (x,(a+1,b+1)): posboards (xs) (a,b)
 
 
 sizeofBoard = replicate 64 Black 
 
-makeBoard = let (x:xs) = sizeofBoard in
+makeEmptyBoard = let (x:xs) = sizeofBoard in
                    makeBoardAux (x:xs) where
                        makeBoardAux (x:y:xs) = Black:White:makeBoardAux xs
                        makeBoardAux [] = []
 
+letmakeRows = let (x:xs) = makeEmptyBoard in
+                  rows (x:xs) where
+                      rows l@(x:xs) = [take 8 l] ++ rows (drop 8 l)
+                      rows [] = []
+                       
 gameState = undefined
 
 movePlayer = undefined
-
 
