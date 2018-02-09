@@ -1,3 +1,4 @@
+--MADDE
 import Data.Char
 import Control.Monad
 import Control.Exception
