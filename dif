@@ -1,2 +1,2 @@
 #!/bin/bash
-git diff master origin/master
+git fetch; git diff master origin/master
