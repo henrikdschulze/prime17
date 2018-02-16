@@ -129,10 +129,10 @@ validMove (x:xs) (u,v) (w,q) = validMoveaux (concat (addPositionGameState (x:xs)
         |(u,v) == (w-1,q+1) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
         |(u,v) == (w+1,q+1) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
         |(u,v) == (w+1,q-1) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
-        |(u,v) == (w-2,q-2) = if (c,d) == (w,q) && y == "w" then True else validMoveaux ys (u,v) (w,q)
-        |(u,v) == (w-2,q+2) = if (c,d) == (w,q) && y == "w" then True else validMoveaux ys (u,v) (w,q)
-        |(u,v) == (w+2,q+2) = if (c,d) == (w,q) && y == "w" then True else validMoveaux ys (u,v) (w,q)
-        |(u,v) == (w+2,q-2) = if (c,d) == (w,q) && y == "w" then True else validMoveaux ys (u,v) (w,q)
+        |(u,v) == (w-2,q-2) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
+        |(u,v) == (w-2,q+2) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
+        |(u,v) == (w+2,q+2) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
+        |(u,v) == (w+2,q-2) = if (c,d) == (w,q) && y == "." then True else validMoveaux ys (u,v) (w,q)
         |otherwise = False  
         
         
@@ -144,14 +144,50 @@ validPlaceRed (x:xs) (s,t) = validPlaceaux (concat (addPositionGameState (x:xs))
         |c == s && d == t = if y == "r" then True else False 
         |otherwise = validPlaceaux ys (s,t)
 
-playMove x y = undefined
+playMove :: GameState -> Move -> Move -> GameState
+playMove (x:xs) (fromrow,fromcol) (torow,tocol) = letmakeRowswithPieces (removePosition (playMoveAux (concat (addPositionGameState (x:xs))) (fromrow,fromcol) (torow,tocol))) where
+    playMoveAux [] _ _ = []
+    playMoveAux all@(x:xs) (fromrow,fromcol) (torow,tocol) = let (r,(s,t)) = all !! (findPosition (fromrow,fromcol)) in -- OBS DOES NOT WORK NEED TO MAKE OWN INSERT FUNCTION
+                                                             let (q,(w,e)) = all !! (findPosition (torow,tocol)) in
+                                                                 makeaMove (x:xs) (r,(s,t)) (q,(w,e)) (fromrow,fromcol) (torow,tocol) where
+                                                                     makeaMove all@(x:xs) (r,(s,t)) (q,(w,e)) (fromrow,fromcol) (torow,tocol)
+                                                                         |(fromrow,fromcol) == (torow-1,tocol-1) = insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))
+                                                                         |(fromrow,fromcol) == (torow-1,tocol+1) = insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))
+                                                                         |(fromrow,fromcol) == (torow+1,tocol+1) = insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))
+                                                                         |(fromrow,fromcol) == (torow+1,tocol-1) = insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))
+                                                                         |(fromrow,fromcol) == (torow-2,tocol-2) = insert (".",(fromrow +1,fromcol +1)) (delete ("w",(fromrow +1,fromcol +1)) (insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow-2,tocol+2) = insert (".",(fromrow +1,fromcol-1)) (delete ("w",(fromrow +1,fromcol-1)) (insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow+2,tocol+2) = insert (".",(fromrow -1,fromcol-1)) (delete ("w",(fromrow -1,fromcol-1)) (insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow+2,tocol-2) = insert (".",(fromrow -1,fromcol+1)) (delete ("w",(fromrow -1,fromcol+1)) (insert (q,(s,t)) (delete (r,(s,t)) (insert (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                             
+                                                             
+
+                                                             
 
 
--- validMove :: GameState -> Move -> Bool
--- validMove (a, _, _) (1, n) = a >= n && 3 >= n && n > 0
--- validMove (_, b, _) (2, n) = b >= n && 3 >= n && n > 0 
--- validMove (_, _, c) (3, n) = c >= n && 3 >= n && n > 0
--- validMove _ _ = False
+                                                             
+                                                             
+findPosition (b,c)
+    |b == 1 = 0 + c-1
+    |b == 2 = 8 + c-1
+    |b == 3 = 16 + c-1
+    |b == 4 = 24 + c-1
+    |b == 5 = 32 + c-1
+    |b == 6 = 40 + c-1
+    |b == 7 = 48 + c-1
+    |b == 8 = 56 + c-1
+    
+    
+-- need to find element of move from and move to in list and the corresponding character. If the character is a "." then we can just switch place between piece and dot.
+-- otherwise we need to switch place AND remove middle piece aka white piece this time. 
+
+    
+
+-- playMove :: GameState -> Move -> GameState
+-- playMove (a, b, c) (1, n) = (a - n, b, c)
+-- playMove (a, b, c) (2, n) = (a, b - n, c)
+-- playMove (a, b, c) (3, n) = (a, b, c - n)
+
 
 printMove :: Player1 -> Move -> Move -> IO ()
 printMove player (row1, column1) (row2, column2) = putStrLn $ player ++ " " ++ "moves from  " ++ "(" ++ (show row1) ++ " , " ++ (show column1) ++ ")" ++ "  to  " ++ "(" ++ (show row2) ++ " , " ++ (show column2) ++ ")"    
@@ -175,3 +211,4 @@ quitPlease = do
     putStrLn "do you want to play again? (yes/no)?"
     answer <- getLine 
     when (answer == "yes") main
+
