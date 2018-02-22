@@ -329,20 +329,49 @@ upgradeRed newGameState (a,b) = makeGamestate (removePosition (upgradeAux (conca
     EXAMPLES: checkUpgrade [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("r",(8,8))] ("r,"(8,8)) = 
     [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("R",(8,8))]
 -}
+
                                                      checkUpgrade:: ListwithPosition -> (String,Position) -> ListwithPosition
                                                      checkUpgrade all@((y,(c,d)):ys) (r,(s,t))
                                                          |s == 8 = insertAt ((upgradePiece r),(s,t)) (delete (r,(s,t)) all)
                                                          |otherwise = ((y,(c,d)):ys)
-    
+ 
+{- upgradeWhite GameState Position
+    upgrade the white piece to queen. Checks one more time that it is at the correct position and finds the piece corresponding to that position.  
+    PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
+    RETURNS: GameState
+    EXAMPLES: upgradeWhite [["w","."]] (1,1) = [["W","."]]    
+-}
 upgradeWhite:: GameState -> Position -> GameState
 upgradeWhite newGameState (a,b) = makeGamestate (removePosition (upgradeAux (concat (addPositionGameState newGameState)) (a,b))) where
+{- upgradeAux ListwithPosition Position
+    upgrade the white piece to queen. Checks one more time that it is at the correct position and finds the piece corresponding to that position.  
+    PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
+    RETURNS: ListwithPosition
+    EXAMPLES: upgradeAux ["w","."] (1,1) = ["W","."]
+-}
+    upgradeAux :: ListwithPosition -> Position -> ListwithPosition
     upgradeAux ((y,(c,d)):ys) (a,b) = let (r,(s,t)) = ((y,(c,d)):ys) !! (findPosition (a,b)) in
                                                  checkUpgrade ((y,(c,d)):ys) (r,(s,t)) where
+{- checkUpgrade ListwithPosition (String,Position)
+    upgrade the white piece to queen. Checks one more time that it is at the correct position. 
+    PRE: No empty list and valid Position. 
+    RETURNS: ListwithPosition
+    EXAMPLES: checkUpgrade [("w",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("r",(8,8))] ("w,"(1,1)) = 
+    [("W",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("R",(8,8))]
+-}
+                                                     checkUpgrade:: ListwithPosition -> (String,Position) -> ListwithPosition
                                                      checkUpgrade all@((y,(c,d)):ys) (r,(s,t))
                                                          |s == 1 = insertAt ((upgradePiece r),(s,t)) (delete (r,(s,t)) all)
                                                          |otherwise = ((y,(c,d)):ys)       
 
 
+{- playerMoveRed GameState
+   Purpose: From the current gamestate, gets input from the player for one position the player want to move from and one position to move to and prints these to the screen.
+   Prints out the current gamestate for the player to see. Also checks if certain conditions are met and if so, does those functions. 
+   Pre: Valid gameState
+   Return: IO GameState
+   Side effect: Prints out different gameStates to the screen depending on conditions.
+-}
 playerMoveRed :: GameState -> IO GameState
 playerMoveRed gameState = do
   putStrLn "Player Red move from"
@@ -365,7 +394,13 @@ playerMoveRed gameState = do
         putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
         playerMoveRed gameState             
             
-            
+{- playerMoveWhite GameState
+   Purpose: From the current gamestate, gets input from the player for one position the player want to move from and one position to move to and prints these to the screen.
+   Prints out the current gamestate for the player to see. Also checks if certain conditions are met and if so, does those functions. 
+   Pre: Valid gameState
+   Return: IO GameState
+   Side effect: Prints out different gameStates to the screen depending on conditions.
+-}            
 playerMoveWhite :: GameState -> IO GameState            
 playerMoveWhite gameState = do
   putStrLn "Player White move from"
@@ -387,7 +422,13 @@ playerMoveWhite gameState = do
        putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
        playerMoveWhite gameState       
 
-       
+
+{- doubleMoveWhite GameState Move
+   Purpose: If after a jump, the player is able to jump again, this functions starts forcing the player to move the same piece.
+   Pre: Valid gameState and valid Move
+   Return: IO GameState
+   Side effect: Prints out different gameStates to the screen depending on conditions and returns the gamestate to the playerMoveWhite function. 
+-}
 doubleMoveWhite:: GameState -> Move -> IO GameState       
 doubleMoveWhite newGameState (a,b) = do
     let move3 = (a,b)
@@ -408,6 +449,12 @@ doubleMoveWhite newGameState (a,b) = do
          putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
          doubleMoveWhite newGameState (a,b)       
 
+{- doubleMoveRed GameState Move
+   Purpose: If after a jump, the player is able to jump again, this functions starts forcing the player to move the same piece.
+   Pre: Valid gameState and valid Move
+   Return: IO GameState
+   Side effect: Prints out different gameStates to the screen depending on conditions and returns the gamestate to the playerMoveRed function. 
+-}
 doubleMoveRed:: GameState -> Move -> IO GameState       
 doubleMoveRed newGameState (a,b) = do
     let move3 = (a,b)
@@ -428,7 +475,12 @@ doubleMoveRed newGameState (a,b) = do
          putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
          doubleMoveRed newGameState (a,b)         
          
-         
+ 
+{- readMove
+   Purpose: Reads a move from standard input
+   Post: A move object 
+   Side-effects: Reads one or more lines from standard input 
+-}
 readMove :: (IO Move) -- reads input from
 readMove = do
   catch (do
@@ -439,13 +491,50 @@ readMove = do
     readMove) :: SomeException -> IO Move)
     
     
-    
+
+{- validMoveRed GameState Move Move
+    Returns True if the moves are valid for Player Red, returns false otherwise. First move is the position the piece moves from. Second move it the position
+    the player wants to move to. 
+    PRE: No empty gamestate
+    RETURNS: Bool
+    EXAMPLES: validMoveRed [["r",".","r",".","r",".","r","."],
+                            [".","r",".","r",".","r",".","r"],
+                            ["r",".","r",".","r",".","r","."],
+                            [".",".",".",".",".",".",".","."],
+                            [".",".",".",".",".",".",".","."],
+                            [".","w",".","w",".","w",".","w"],
+                            ["w",".","w",".","w",".","w","."],
+                            [".","w",".","w",".","w",".","w"]] (3,3) (4,4) = True    
+-}
 validMoveRed :: GameState -> Move -> Move -> Bool
 validMoveRed (x:xs) (u,v) (w,q) = validMoveauxRed (concat (addPositionGameState (x:xs))) (u,v) (w,q)
 
+{- validMoveWhite GameState Move Move
+    Returns True if the moves are valid for Player White, returns false otherwise. First move is the position the piece moves from. Second move it the position
+    the player wants to move to. 
+    PRE: No empty gamestate
+    RETURNS: Bool
+    EXAMPLES: validMoveWhite[["r",".","r",".","r",".","r","."],
+                            [".","r",".","r",".","r",".","r"],
+                            ["r",".","r",".","r",".","r","."],
+                            [".",".",".",".",".",".",".","."],
+                            [".",".",".",".",".",".",".","."],
+                            [".","w",".","w",".","w",".","w"],
+                            ["w",".","w",".","w",".","w","."],
+                            [".","w",".","w",".","w",".","w"]] (6,6) (5,5) = True    
+-}
 validMoveWhite :: GameState -> Move -> Move -> Bool
 validMoveWhite (x:xs) (u,v) (w,q) = validMoveauxWhite (concat (addPositionGameState (x:xs))) (u,v) (w,q)
 
+{- validMoveauxRed ListwithPosition Move Move
+    Returns True if the moves are valid for Player Red, returns false otherwise. First move is the position the piece moves from. Second move it the position
+    the player wants to move to. 
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validMoveauxRed [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",    (2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (3,3) (4,4) = True
+              validMoveauxRed [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (3,3) (5,5) = False
+    
+-}
 validMoveauxRed ::ListwithPosition -> Move -> Move -> Bool
 validMoveauxRed [] _ _ = False
 validMoveauxRed ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)) in
@@ -457,6 +546,14 @@ validMoveauxRed ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)) 
                                  let (dx,(ry,cy)) = ys !! (findPosition (u-2,v+2)) in
                                  let (dq,(ru,cu)) = ys !! (findPosition (u-2,v-2)) in
                                   validMoveauxaux ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu)) where
+{- validMoveauxaux ListwithPosition Move Move (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position)
+    Returns True if the moves are valid for Player Red, returns false otherwise. First move is the position the piece moves from. Second move it the position the player wants to move to.
+    All (String,Position) corresponds to various positions and strings around the first Move. The positions in order are, if we consider that first move are in the center,
+    LowerRight, LowerLeft, UpperRight,Upperleft, LowerRightLowerRight, LowerLeftLowerLeft, UpperRightUpperRight, UpperLeftUpperLeft.   
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool   
+-}
+                                      validMoveauxaux:: ListwithPosition -> Move -> Move -> (String, Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String, Position) -> Bool
                                       validMoveauxaux ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
                                           |(u,v) == (w-2,q-2) = validMoveRedJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
                                           |(u,v) == (w-2,q+2) = validMoveRedJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu)) 
@@ -465,7 +562,13 @@ validMoveauxRed ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)) 
                                           |otherwise = validMoveAll ys (u,v) (w,q)
                                       
                                       
-                                      
+{- validMoveRedJump ListwithPosition Move Move (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position)
+    Returns True if the moves are valid for Player Red, returns false otherwise. First move is the position the piece moves from. Second move it the position the player wants to move to.
+    All (String,Position) corresponds to various positions and strings around the first Move. The positions in order are, if we consider that first move are in the center,
+    LowerRight, LowerLeft, UpperRight,Upperleft, LowerRightLowerRight, LowerLeftLowerLeft, UpperRightUpperRight, UpperLeftUpperLeft.   
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool   
+-}                                      
 validMoveRedJump:: ListwithPosition -> Move -> Move -> (String, Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String, Position) -> Bool
 
 validMoveRedJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))                                      
@@ -480,6 +583,14 @@ validMoveRedJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,
     |otherwise = if ((p == "w" || p == "W") && dt == ".") || ((m == "w" || m == "W") && dy == ".") || ((a == "w" || a == "W") && dx == ".") || ((s == "w" || s == "W") && dq == ".") then True else False
   
 
+{- validMoveauxWhite ListwithPosition Move Move
+    Returns True if the moves are valid for Player White, returns false otherwise. First move is the position the piece moves from. Second move it the position
+    the player wants to move to. 
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board.  
+    RETURNS: Bool
+    EXAMPLES: validMoveauxWhite [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (7,7) (8,8) = False
+            validMoveauxWhite [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",   (2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (6,6) (5,5) = True 
+-}
 validMoveauxWhite ::ListwithPosition -> Move -> Move -> Bool
 validMoveauxWhite [] _ _ = False
 validMoveauxWhite ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)) in
@@ -491,6 +602,14 @@ validMoveauxWhite ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)
                                    let (dx,(ry,cy)) = ys !! (findPosition (u-2,v+2)) in
                                    let (dq,(ru,cu)) = ys !! (findPosition (u-2,v-2)) in
                                        validMoveauxaux ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu)) where
+{- validMoveauxaux ListwithPosition Move Move (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position)
+    Checks first move with second move to see if you want to jump or take a step. If you want to jump it runs the function validMoveWhiteJump. Otherwise runs validMoveAll. 
+    All (String,Position) corresponds to various positions and strings around the first Move. The positions in order are, if we consider that first move are in the center,
+    LowerRight, LowerLeft, UpperRight,Upperleft, LowerRightLowerRight, LowerLeftLowerLeft, UpperRightUpperRight, UpperLeftUpperLeft.   
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool   
+-}
+                                       validMoveauxaux:: ListwithPosition -> Move -> Move -> (String, Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String, Position) -> Bool
                                        validMoveauxaux ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
                                            |(u,v) == (w-2,q-2) = validMoveWhiteJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
                                            |(u,v) == (w-2,q+2) = validMoveWhiteJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu)) 
@@ -498,6 +617,16 @@ validMoveauxWhite ys (u,v) (w,q) = let (p,(l,e)) = ys !! (findPosition (u+1,v+1)
                                            |(u,v) == (w+2,q-2) = validMoveWhiteJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
                                            |otherwise = validMoveAll ys (u,v) (w,q)
 
+
+{- validMoveAll ListwithPosition Move Move
+    Returns true if you have a valid move were you move your piece one step diagonally from the starting position (first move). Works for both players.
+    VARIANT: Length of list
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validMoveAll [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),                 
+              ("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (3,3) (4,4) = True 
+              validMoveAll [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (3,3) (8,8) = False
+-}
 validMoveAll :: ListwithPosition -> Move -> Move -> Bool
 validMoveAll [] _ _ = False                                                      
 validMoveAll ((y,(c,d)):ys) (u,v) (w,q) 
@@ -507,6 +636,15 @@ validMoveAll ((y,(c,d)):ys) (u,v) (w,q)
     |(u,v) == (w+1,q-1) = if (c,d) == (w,q) && y == "." then True else validMoveAll ys (u,v) (w,q)
     |otherwise = False
     
+   
+{- validMoveWhiteJump ListwithPosition Move Move (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position) (String, Position)
+    Returns True if the moves are valid for Player White, returns false otherwise. First move is the position the piece moves from. Second move it the position the player wants to move to.
+    This function considers a valid move a jump, that is to say two steps diagonally from the starting position (first move argument).
+    All (String,Position) corresponds to various positions and strings around the first Move. The positions in order are, if we consider that first move are in the center,
+    LowerRight, LowerLeft, UpperRight,Upperleft, LowerRightLowerRight, LowerLeftLowerLeft, UpperRightUpperRight, UpperLeftUpperLeft.   
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. Valid (String,Position) around the first move according to the order above.  
+    RETURNS: Bool   
+-}    
 validMoveWhiteJump:: ListwithPosition -> Move -> Move -> (String, Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position) -> (String, Position) -> Bool
 validMoveWhiteJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))                                      
     |(u == 1 || u == 2) && (v == 1 || v == 2) = if ((p == "r" || p == "R") && dt == ".") then True else False
@@ -520,23 +658,81 @@ validMoveWhiteJump ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g)) (dt,(r
     |otherwise = if ((p == "r" || p == "R") && dt == ".") || ((m == "r" || m == "R") && dy == ".") || ((a == "r" || a == "R") && dx == ".") || ((s == "r" || s == "R") && dq == ".") then True else False   
         
         
-        
+{- validchoiceRed GameState Move
+    Returns true if you have a valid choice of player piece. That means that the player Red may only move red pieces. Move in this case is the position you want to move from.
+    Note that this function only cares that you select one correct piece, it does not care if you can move from there or not. 
+    VARIANT: Length of list
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validchoiceRed [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],        
+              [".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]] (3,3) = True
+              validchoiceRed [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]] (4,4) = False
+-}        
 validchoiceRed :: GameState -> Move -> Bool
 validchoiceRed (x:xs) (s,t) = validPlaceaux (concat (addPositionGameState (x:xs))) (s,t) where
+{- validPlaceaux ListwithPosition Move
+    Returns true if you have a valid choice of player piece. That means that the player Red may only move red pieces. Move in this case is the position you want to move from.
+    It checks which position you want to move from and checks which piece is at that position. If the piece is "r" or "R" then True. Else False. 
+    Note that this function only cares that you select one correct piece, it does not care if you can move from there or not. 
+    VARIANT: Length of list
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validPlaceaux [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (1,1) = True
+-}
+    validPlaceaux:: ListwithPosition -> Move -> Bool
     validPlaceaux [] _ = False
     validPlaceaux ((y,(c,d)):ys) (s,t)
         |c == s && d == t = if (y == "r" || y == "R") then True else False 
         |otherwise = validPlaceaux ys (s,t)
-        
+  
+
+{- validchoiceWhite GameState Move
+    Returns true if you have a valid choice of player piece. That means that the player White may only move white pieces. Move in this case is the position you want to move from.
+    Note that this function only cares that you select one correct piece, it does not care if you can move from there or not. 
+    VARIANT: Length of list
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validchoiceWhite [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],        
+              [".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]] (5,5) = False
+              validchoiceWhite [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]] (8,8) = True
+-}  
 validchoiceWhite :: GameState -> Move -> Bool
 validchoiceWhite (x:xs) (s,t) = validPlaceaux (concat (addPositionGameState (x:xs))) (s,t) where
+{- validPlaceaux ListwithPosition Move
+    Returns true if you have a valid choice of player piece. That means that the player White may only move white pieces. Move in this case is the position you want to move from.
+    It checks which position you want to move from and checks which piece is at that position. If the piece is "w" or "W" then True. Else False. 
+    Note that this function only cares that you select one correct piece, it does not care if you can move from there or not. 
+    VARIANT: Length of list
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: Bool
+    EXAMPLES: validPlaceaux [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (7,7) = True
+-}
+    validPlaceaux:: ListwithPosition -> Move -> Bool
     validPlaceaux [] _ = False
     validPlaceaux ((y,(c,d)):ys) (s,t)
         |c == s && d == t = if (y == "w" || y == "W") then True else False 
         |otherwise = validPlaceaux ys (s,t)        
 
+{- playMove GameState Move Move
+    Returns a GameState in which the player has moved from first Move to second Move. 
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: GameState
+    EXAMPLES: playMove [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],          
+                        [".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]] (3,3) (4,4) = 
+                        [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".",".",".","r",".","r","."],[".",".",".","r",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+-}
 playMove :: GameState -> Move -> Move -> GameState
 playMove (x:xs) (fromrow,fromcol) (torow,tocol) = makeGamestate (removePosition (playMoveAux (concat (addPositionGameState (x:xs))) (fromrow,fromcol) (torow,tocol))) where
+{- playMoveAux ListwithPosition Move Move
+    Returns a list with positions in which the player has moved from first Move to second Move. 
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: ListwithPosition
+    EXAMPLES: playMoveAux [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),
+                        ("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))] (3,3) (4,4) = 
+                        [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),(".",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),("r",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))]
+-}
+
+    playMoveAux::ListwithPosition -> Move -> Move -> ListwithPosition
     playMoveAux [] _ _ = []
     playMoveAux all@(x:xs) (fromrow,fromcol) (torow,tocol) = let (r,(s,t)) = all !! (findPosition (fromrow,fromcol)) in
                                                              let (q,(w,e)) = all !! (findPosition (torow,tocol)) in
@@ -545,32 +741,69 @@ playMove (x:xs) (fromrow,fromcol) (torow,tocol) = makeGamestate (removePosition 
                                                              let (a,(b,n)) = all !! (findPosition (fromrow-1,fromcol+1)) in
                                                              let (xa,(f,g)) = all !! (findPosition (fromrow-1,fromcol-1)) in
                                                                  makeaMove (x:xs) (r,(s,t)) (q,(w,e)) (fromrow,fromcol) (torow,tocol) (p,(l,ef)) (m,(i,o)) (a,(b,n)) (xa,(f,g)) where
+{- makeaMove ListwithPosition (String,Position) (String,Position) Move Move (String,Position) (String,Position) (String,Position) (String,Position)
+    Returns a list with positions. All (String,Position) corresponds to various positions and strings around the first Move, except the first one which is the piece corresponding to the first Move.
+    The positions in order are, if we consider that first Move are in the center, LowerRight, LowerLeft, UpperRight,Upperleft. It deletes the (String,Position) you want to move to and inserts the piece
+    at the same position. It then deletes the piece from the starting position and inserts a "." since it's now empty.  
+    PRE: Valid move (row 1-8, column 1-8), no numbers outside the board. 
+    RETURNS: ListwithPosition
+-}
                                                                      makeaMove all@(x:xs) (r,(s,t)) (q,(w,e)) (fromrow,fromcol) (torow,tocol) (p,(l,ef)) (m,(i,o)) (a,(b,n)) (xa,(f,g))
                                                                          |(fromrow,fromcol) == (torow-1,tocol-1) = insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))
                                                                          |(fromrow,fromcol) == (torow-1,tocol+1) = insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))
                                                                          |(fromrow,fromcol) == (torow+1,tocol+1) = insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))
                                                                          |(fromrow,fromcol) == (torow+1,tocol-1) = insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))
-                                                                         |(fromrow,fromcol) == (torow-2,tocol-2) = insertAt (".",(fromrow +1,fromcol +1)) (delete (showPiece p,(fromrow +1,fromcol +1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
-                                                                         |(fromrow,fromcol) == (torow-2,tocol+2) = insertAt (".",(fromrow +1,fromcol-1)) (delete (showPiece m,(fromrow +1,fromcol-1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
-                                                                         |(fromrow,fromcol) == (torow+2,tocol+2) = insertAt (".",(fromrow -1,fromcol-1)) (delete (showPiece xa,(fromrow -1,fromcol-1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
-                                                                         |(fromrow,fromcol) == (torow+2,tocol-2) = insertAt (".",(fromrow -1,fromcol+1)) (delete (showPiece a,(fromrow -1,fromcol+1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow-2,tocol-2) = insertAt (".",(fromrow +1,fromcol +1)) (delete (p,(fromrow +1,fromcol +1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow-2,tocol+2) = insertAt (".",(fromrow +1,fromcol-1)) (delete (m,(fromrow +1,fromcol-1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow+2,tocol+2) = insertAt (".",(fromrow -1,fromcol-1)) (delete (xa,(fromrow -1,fromcol-1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
+                                                                         |(fromrow,fromcol) == (torow+2,tocol-2) = insertAt (".",(fromrow -1,fromcol+1)) (delete (a,(fromrow -1,fromcol+1)) (insertAt (q,(s,t)) (delete (r,(s,t)) (insertAt (r,(w,e)) (delete (q,(w,e)) all)))))
                                                                                                                     
 
 
                         
 
+{- insertAt:: (String,Position) ListwithPosition 
+    Inserts a (String,Position) at the correct position in a list with the first element being position 0, second one being position 1 and so forth. 
+    PRE: No positions bigger than (8,8), No positions smaller than (1,1)
+    RETURNS: ListwithPosition
+    EXAMPLES: insertAt ("r",(0,1)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,1)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))] = 
+                                    [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,1)),("r",(0,1)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
+              insertAt ("r",(1,2)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,1)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))] = 
+              [("r",(1,1)),("r",(1,2)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,1)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
+-}
 insertAt:: (String,Position) -> ListwithPosition -> ListwithPosition
 insertAt (r,(x,y)) [] = []
 insertAt (r,(x,y)) ((a,(b,c)):xs) = let ((d,(f,(g,h))):ys) = zip [0..] ((a,(b,c)):xs) in
                                       let position = (findPosition (x,y)) in
                                           insertatAux (r,(x,y)) ((d,(f,(g,h))):ys) ((a,(b,c)):xs) position where
+{- insertatAux:: (String,Position) [(Int, (String,Position))] -> ListwithPosition -> Int 
+    Inserts a (String,Position) at the correct position in a list with the first element being position 0, second one being position 1 and so forth.
+    It does this by comparing the two Ints provided in the arguments, if they are the same it inserts the (String,Position) at that place in the list. 
+    PRE: No positions bigger than (8,8), No positions smaller than (1,1). The last Int provided must be the one you get from inserting (x,y) into findPosition.  
+    RETURNS: ListwithPosition
+    EXAMPLES: insertatAux ("r",(1,2)) [(0,("r",(1,1))),(1,(".",(1,2))),(2,("r",(1,3))),(3,(".",(1,4))),(4,("r",(1,5))),(5,(".",(1,6))),(6,("r",(1,7))),(7,(".",(1,8)))]
+              [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))] 1 = 
+              [("r",(1,1)),("r",(1,2)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
+-}
+                                              insertatAux :: (String,Position) -> [(Int, (String, Position))] -> ListwithPosition -> Int -> ListwithPosition
                                               insertatAux (r,(x,y)) [] [] _ = [] 
                                               insertatAux (r,(x,y)) ((d,(f,(g,h))):ys) ((a,(b,c)):xs) position
-                                                         |position == d = (r,(x,y)):(a,(b,c)):xs
-                                                         |x == 8 && y == 8 = (a,(b,c)):xs ++ [(r,(x,y))] 
-                                                         |otherwise = [(f,(g,h))] ++ insertatAux (r,(x,y)) ys xs position 
-           
-findPosition :: (Eq a1, Num a1, Num a2) => (a1, a2) -> a2                                                             
+                                                  |position == d = (r,(x,y)):(a,(b,c)):xs
+                                                  |x == 8 && y == 8 = (a,(b,c)):xs ++ [(r,(x,y))] 
+                                                  |otherwise = [(f,(g,h))] ++ insertatAux (r,(x,y)) ys xs position 
+
+                                                
+
+{- findPosition Position
+    Finds the number indexed at that position. First element is indexed at 0, second element is indexed at 1 and so forth. 
+    Otherwise is an outlier, merely there to make the code complile and should under no circumstances be used. 
+    PRE: No positions bigger than (8,8), No positions smaller than (1,1).  
+    RETURNS: Int
+    EXAMPLES: findPosition (1,1) = 0
+              findPosition (7,8) = 55
+-}
+
+findPosition :: Position -> Int                                                             
 findPosition (b,c)
     |b == 1 = 0 + c-1
     |b == 2 = 8 + c-1

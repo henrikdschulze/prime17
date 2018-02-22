@@ -4,15 +4,15 @@ import Control.Exception
 import Debug.Trace
 import Data.List
 
-{- the Player is represented by a color and a type
+{- the Square is represented by a color and a type
   INVARIANT:
-    There are only three colors and three types because Player None NotHere is there to represent if
+    There are only three colors and three types because Square None NotHere is there to represent if
     there is no piece in that position, and that Color None and Type NotHere is there as an edge case.
     Each Color corresponds to a character and uppercase or lowercase to represent the character's type.
-    Player Red Normal & Player Red Queen represent Player Red while Player White Normal
-    & Player White Queen represent Player White.
+    Square Red Normal & Square Red King represent Square Red while Square White Normal
+    & Square White King represent Square White.
  -}
-data Player = Player Color Type
+data Square = Square Color Type
 
 {- the Color is either Red, White or None.
   INVARIANT:
@@ -22,14 +22,14 @@ data Player = Player Color Type
  -}
 data Color = Red | White | None
 
-{- the Type is either Normal, Queen or NotHere.
+{- the Type is either Normal, King or NotHere.
   INVARIANT:
     There are only three types. Lowercase characters represent "Normal" pieces and uppercase characters
-    represent "Queen" pieces, meaning for example that player Red have managed to move one of the pieces
-    to the last row. "r" for Red Normal, "R" for Red Queen and "w" for White Normal and "W" for White Queen.
+    represent "King" pieces, meaning for example that player Red have managed to move one of the pieces
+    to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
     NotHere means that the space is empty, namely ".".
 -}
-data Type = Normal | Queen | NotHere
+data Type = Normal | King | NotHere
 
 {- GameState is the board and is represented as a list of strings in a list.
   INVARIANT:
@@ -72,20 +72,20 @@ type Position = (Int, Int)
  -}
 type Move = (Int, Int)
 
-{- readPiece Player
-    Converts the Player data type to a String.
+{- readPiece Square
+    Converts the Square data type to a String.
   PRE:     True
   RETURNS: String
   EXAMPLES:
-    readPiece (Player Red Normal) = "r"
-    readPiece (Player White Normal) = "w"
+    readPiece (Square Red Normal) = "r"
+    readPiece (Square White Normal) = "w"
 -}
-readPiece:: Player -> String
-readPiece (Player Red Normal) = "r"
-readPiece (Player Red Queen) = "R"
-readPiece (Player White Normal) = "w"
-readPiece (Player White Queen) = "W"
-readPiece (Player None NotHere) = "."
+readPiece:: Square -> String
+readPiece (Square Red Normal) = "r"
+readPiece (Square Red King) = "R"
+readPiece (Square White Normal) = "w"
+readPiece (Square White King) = "W"
+readPiece (Square None NotHere) = "."
 
 {- showPiece String
     Takes a string and returns the same string. Useful when you are not sure
@@ -97,11 +97,11 @@ readPiece (Player None NotHere) = "."
     showPiece "r" = "r"
 -}
 showPiece :: String -> String
-showPiece "w" = readPiece (Player White Normal)
-showPiece "W" = readPiece (Player White Queen)
-showPiece "r" = readPiece (Player Red Normal)
-showPiece "R" = readPiece (Player Red Queen)
-showPiece "." = readPiece (Player None NotHere)
+showPiece "w" = readPiece (Square White Normal)
+showPiece "W" = readPiece (Square White King)
+showPiece "r" = readPiece (Square Red Normal)
+showPiece "R" = readPiece (Square Red King)
+showPiece "." = readPiece (Square None NotHere)
 
 {- upgradePiece String
     Takes a string and returns the string in uppercase. If the string already is in uppercase,
@@ -153,11 +153,12 @@ emptyBoard = replicate 64 "."
       (".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("w",(8,8))]
 -}
 addPosition::ListwithPosition
-addPosition = let (x:xs) = insertPlayer in
+addPosition = let (x:xs) = insertSquare in
             addPositionAux (x:xs) (1,1) where
 {- addPositionAux List Position
-    adds positions to the elements in the list. Row number is the first number and goes from 1 to 8. Column number is the second number and goes from 1 to 8.
-    PRE: True
+    Adds positions to the elements in the list. Row number is the first number and goes from 1 to 8.
+    Column number is the second number and goes from 1 to 8.
+  PRE: True
   RETURNS: ListwithPosition
   EXAMPLES:
     addPositionAux [] _ = []
@@ -171,7 +172,7 @@ addPosition = let (x:xs) = insertPlayer in
 
 {- removePosition ListwithPosition
     removes the positions from the list, returning only a list with the empty tiles and pieces.
-    PRE: True
+  PRE: True
   RETURNS: List
   EXAMPLES:
     removePosition [] = []
@@ -183,7 +184,7 @@ removePosition ((x,(a,b)):xs) = [x] ++ removePosition xs
 
 {- addPositionGameState GameState
     adds positions to the GameState. Row number is the first number and goes from 1 to 8. Column number is the second number and goes from 1 to 8.
-    PRE: No empty list
+  PRE: No empty list
   RETURNS: GameStateWithPosition
   EXAMPLES:
     addPositionGameState [["r","."],["r"]] = [[("r",(1,1)),(".",(1,2)),("r",(1,3))]]
@@ -193,7 +194,7 @@ addPositionGameState :: GameState -> GameStateWithPosition
 addPositionGameState (x:xs) = makeGamestate (addPositionAux (concat(x:xs)) (1,1)) where
 {- addPositionAux List Position
     adds positions to the elements in the list. Row number is the first number and goes from 1 to 8. Column number is the second number and goes from 1 to 8.
-    PRE: True
+  PRE: True
   RETURNS: ListwithPosition
   EXAMPLES:
     addPositionAux [] _ = []
@@ -206,63 +207,63 @@ addPositionGameState (x:xs) = makeGamestate (addPositionAux (concat(x:xs)) (1,1)
       |b == 8 = [(x,(a,b))] ++ addPositionAux xs (a+1,b-7)
 
 
-{- insertPlayer
+{- insertSquare
     Insert the player pieces into the empty list.
   RETURNS: List
   EXAMPLES:
-    insertPlayer = ["r",".","r",".","r",".","r",".",".","r",".",
+    insertSquare = ["r",".","r",".","r",".","r",".",".","r",".",
                    "r",".","r",".","r","r",".","r",".","r",".","r",
                    ".",".",".",".",".",".",".",".",".",".",".",".",
                    ".",".",".",".",".",".","w",".","w",".","w",".",
                    "w","w",".","w",".","w",".","w",".",".","w",".",
                    "w",".","w",".","w"]
 -}
-insertPlayer::List
-insertPlayer = let (x:y:xs) = emptyBoard in insertPlayerRed (x:y:xs) readPiece (Player Red Normal) (1) where
-{- insertPlayerRed List readPiece Player Int
-    Insert the player Red pieces into the empty list as strings. After that it calls the insertPlayerWhite function and concatinates itself with that list.
+insertSquare::List
+insertSquare = let (x:y:xs) = emptyBoard in insertSquareRed (x:y:xs) readPiece (Square Red Normal) (1) where
+{- insertSquareRed List readPiece Square Int
+    Insert the player Red pieces into the empty list as strings. After that it calls the insertSquareWhite function and concatinates itself with that list.
     Pre: List must have an even number of elements
   RETURNS: List
   EXAMPLES:
-    insertPlayerRed emptyBoard readPiece (Player Red Normal) 1 = ["r",".","r",".","r",".","r",".",".","r",".","r",".","r",".","r","r",".","r",".","r",".","r",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".","w",".","w",".","w",".","w","w",".","w",".","w",".","w",".",".","w",".","w",".","w",".","w"]
+    insertSquareRed emptyBoard readPiece (Square Red Normal) 1 = ["r",".","r",".","r",".","r",".",".","r",".","r",".","r",".","r","r",".","r",".","r",".","r",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".","w",".","w",".","w",".","w","w",".","w",".","w",".","w",".",".","w",".","w",".","w",".","w"]
 -}
-    insertPlayerRed :: (Ord a, Num a) => [String] -> (Player -> String) -> Player -> a -> [String]
-    insertPlayerRed [] _ _ _ = []
-    insertPlayerRed (x:y:xs) readPiece (Player Red Normal) (num)
-      |num <= 4 = (readPiece (Player Red Normal)):y:(insertPlayerRed xs readPiece (Player Red Normal) (num+1))
-      |num > 4 && num <= 8 = y:(readPiece (Player Red Normal)):(insertPlayerRed xs readPiece (Player Red Normal) (num+1))
-      |num > 8 && num < 12 = (readPiece (Player Red Normal)):y:(insertPlayerRed xs readPiece (Player Red Normal) (num+1))
-      |num == 12 = (readPiece (Player Red Normal)):y:(reverse(insertPlayerWhite (reverse xs)))
+    insertSquareRed :: (Ord a, Num a) => [String] -> (Square -> String) -> Square -> a -> [String]
+    insertSquareRed [] _ _ _ = []
+    insertSquareRed (x:y:xs) readPiece (Square Red Normal) (num)
+      |num <= 4 = (readPiece (Square Red Normal)):y:(insertSquareRed xs readPiece (Square Red Normal) (num+1))
+      |num > 4 && num <= 8 = y:(readPiece (Square Red Normal)):(insertSquareRed xs readPiece (Square Red Normal) (num+1))
+      |num > 8 && num < 12 = (readPiece (Square Red Normal)):y:(insertSquareRed xs readPiece (Square Red Normal) (num+1))
+      |num == 12 = (readPiece (Square Red Normal)):y:(reverse(insertSquareWhite (reverse xs)))
 
-{- insertPlayerWhite List
+{- insertSquareWhite List
     Insert the player White pieces into a list.
     Pre: List must have an even number of elements
   RETURNS: List
   EXAMPLES:
-    insertPlayerWhite ["r",".","r"] = ["w","."*** Exception: checkers.hs:(203,5)-(208,59): Non-exhaustive patterns in function insertPlayerWhiteAux
-          insertPlayerWhite ["r",".","r","."] = ["w",".","w","."]
+    insertSquareWhite ["r",".","r"] = ["w","."*** Exception: checkers.hs:(203,5)-(208,59): Non-exhaustive patterns in function insertSquareWhiteAux
+          insertSquareWhite ["r",".","r","."] = ["w",".","w","."]
 -}
-insertPlayerWhite:: List -> List
-insertPlayerWhite xs = insertPlayerWhiteAux xs readPiece (Player White Normal) (1) where
-{- insertPlayerWhiteAux List readPiece Player Int
+insertSquareWhite:: List -> List
+insertSquareWhite xs = insertSquareWhiteAux xs readPiece (Square White Normal) (1) where
+{- insertSquareWhiteAux List readPiece Square Int
     Insert the player White pieces into the empty list as strings.
-    PRE: List must have an even number of elements
+  PRE: List must have an even number of elements
   RETURNS: List
   EXAMPLES:
-    insertPlayerWhiteAux emptyBoard readPiece (Player White Normal) 1 = ["w",".","w",".","w",".","w",".",".","w",".","w",".","w",".","w","w",".","w",".","w",".","w",".",".",".",
+    insertSquareWhiteAux emptyBoard readPiece (Square White Normal) 1 = ["w",".","w",".","w",".","w",".",".","w",".","w",".","w",".","w","w",".","w",".","w",".","w",".",".",".",
     ".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".","."]
 -}
-    insertPlayerWhiteAux :: (Ord a, Num a) => [String] -> (Player -> String) -> Player -> a -> [String]
-    insertPlayerWhiteAux [] _ _ _ = []
-    insertPlayerWhiteAux (x:y:ys) readPiece (Player White Normal) (num)
-      |num <= 4 = (readPiece (Player White Normal)):y:(insertPlayerWhiteAux ys readPiece (Player White Normal) (num+1))
-      |num > 4 && num <= 8 = y:(readPiece (Player White Normal)):(insertPlayerWhiteAux ys readPiece (Player White Normal) (num+1))
-      |num > 8 && num < 12 = (readPiece (Player White Normal)):y:(insertPlayerWhiteAux ys readPiece (Player White Normal) (num+1))
-      |num == 12 = (readPiece (Player White Normal)):y:ys
+    insertSquareWhiteAux :: (Ord a, Num a) => [String] -> (Square -> String) -> Square -> a -> [String]
+    insertSquareWhiteAux [] _ _ _ = []
+    insertSquareWhiteAux (x:y:ys) readPiece (Square White Normal) (num)
+      |num <= 4 = (readPiece (Square White Normal)):y:(insertSquareWhiteAux ys readPiece (Square White Normal) (num+1))
+      |num > 4 && num <= 8 = y:(readPiece (Square White Normal)):(insertSquareWhiteAux ys readPiece (Square White Normal) (num+1))
+      |num > 8 && num < 12 = (readPiece (Square White Normal)):y:(insertSquareWhiteAux ys readPiece (Square White Normal) (num+1))
+      |num == 12 = (readPiece (Square White Normal)):y:ys
 
 {- makeGamestate [a]
     Makes a list into a list of lists
-    PRE: No empty list
+  PRE: No empty list
   RETURNS: [[a]]
   EXAMPLES:
     makeGamestate ["r",".",".",".",".",".",".",".","."] = [["r",".",".",".",".",".",".","."],["."]]
@@ -280,7 +281,7 @@ makeGamestate (x:xs) = rows (x:xs) where
 -}
 genGameState:: IO GameState
 genGameState = do
-    return (makeGamestate (insertPlayer))
+    return (makeGamestate (insertSquare))
 
 {- main
   Purpose: Starts the game and generates the gameState
@@ -305,13 +306,13 @@ play gameState = do
     printboard gameState
     newGameState <- playerMoveRed gameState
     if victoryRed newGameState then do
-      putStrLn "Player Red won!"
+      putStrLn "Square Red won!"
       putStrLn ""
       quitPlease
     else do
       newNewGameState <- playerMoveWhite newGameState
       if victoryWhite newNewGameState then do
-        putStrLn "Player White won!"
+        putStrLn "Square White won!"
         putStrLn ""
         quitPlease
                            else
@@ -320,8 +321,8 @@ play gameState = do
 
 
 {- checkifcanUpgradeRed Position
-    Checks if the last move caused the red piece to land on row 8, making it valid to become a Queen piece.
-    PRE: True
+    Checks if the last move caused the red piece to land on row 8, making it valid to become a King piece.
+  PRE: True
   RETURNS: Bool
   EXAMPLES:
     checkifcanUpgradeRed (8,1) = True
@@ -334,8 +335,8 @@ checkifcanUpgradeRed (a,b)
 
 
  {- checkifcanUpgradeWhite Position
-    Checks if the last move caused the white piece to land on row 1, making it valid to become a Queen piece.
-    PRE: True
+    Checks if the last move caused the white piece to land on row 1, making it valid to become a King piece.
+  PRE: True
   RETURNS: Bool
   EXAMPLES:
     checkifcanUpgradeWhite (1,1) = True
@@ -348,7 +349,7 @@ checkifcanUpgradeWhite (a,b)
 
  {- upgradeRed GameState Position
     upgrade the red piece to queen. Checks one more time that it is at the correct position and finds the piece corresponding to that position.
-    PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
+  PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
   RETURNS: GameState
   EXAMPLES:
     upgradeRed [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","r"]] (8,8) = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","R"]]
@@ -357,7 +358,7 @@ upgradeRed :: GameState -> Position -> GameState
 upgradeRed newGameState (a,b) = makeGamestate (removePosition (upgradeAux (concat (addPositionGameState newGameState)) (a,b))) where
 {- upgradeAux ListwithPosition Position
     upgrade the red piece to queen. Checks one more time that it is at the correct position and finds the piece corresponding to that position.
-    PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
+  PRE: No empty list and valid Position. The list must be as large as the position you're checking it against because of !!
   RETURNS: ListwithPosition
   EXAMPLES:
     upgradeAux [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("r",(8,8))] (8,8) =
@@ -368,7 +369,7 @@ upgradeRed newGameState (a,b) = makeGamestate (removePosition (upgradeAux (conca
                                  checkUpgrade ((y,(c,d)):ys) (r,(s,t)) where
 {- checkUpgrade ListwithPosition (String,Position)
     upgrade the red piece to queen. Checks one more time that it is at the correct position.
-    PRE: No empty list and valid Position.
+  PRE: No empty list and valid Position.
   RETURNS: ListwithPosition
   EXAMPLES:
     checkUpgrade [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8)),(".",(2,1)),("r",(2,2)),(".",(2,3)),("r",(2,4)),(".",(2,5)),("r",(2,6)),(".",(2,7)),("r",(2,8)),("r",(3,1)),(".",(3,2)),("r",(3,3)),(".",(3,4)),("r",(3,5)),(".",(3,6)),("r",(3,7)),(".",(3,8)),(".",(4,1)),(".",(4,2)),(".",(4,3)),(".",(4,4)),(".",(4,5)),(".",(4,6)),(".",(4,7)),(".",(4,8)),(".",(5,1)),(".",(5,2)),(".",(5,3)),(".",(5,4)),(".",(5,5)),(".",(5,6)),(".",(5,7)),(".",(5,8)),(".",(6,1)),("w",(6,2)),(".",(6,3)),("w",(6,4)),(".",(6,5)),("w",(6,6)),(".",(6,7)),("w",(6,8)),("w",(7,1)),(".",(7,2)),("w",(7,3)),(".",(7,4)),("w",(7,5)),(".",(7,6)),("w",(7,7)),(".",(7,8)),(".",(8,1)),("w",(8,2)),(".",(8,3)),("w",(8,4)),(".",(8,5)),("w",(8,6)),(".",(8,7)),("r",(8,8))] ("r,"(8,8)) =
@@ -390,11 +391,11 @@ upgradeWhite newGameState (a,b) = makeGamestate (removePosition (upgradeAux (con
 
 playerMoveRed :: GameState -> IO GameState
 playerMoveRed gameState = do
-  putStrLn "Player Red move from"
+  putStrLn "Square Red move from"
   move1 <- readMove
-  putStrLn "Player Red move to"
+  putStrLn "Square Red move to"
   move2 <- readMove
-  printMove "Player Red" move1 move2
+  printMove "Square Red" move1 move2
   if (validchoiceRed gameState move1 && validMoveRed gameState move1 move2) then do
     newGameState <- return (playMove gameState move1 move2)
     if checkifcanUpgradeRed move2 then do
@@ -413,11 +414,11 @@ playerMoveRed gameState = do
 
 playerMoveWhite :: GameState -> IO GameState
 playerMoveWhite gameState = do
-  putStrLn "Player White move from"
+  putStrLn "Square White move from"
   move1 <- readMove
-  putStrLn "Player White move to"
+  putStrLn "Square White move to"
   move2 <- readMove
-  printMove "Player White" move1 move2
+  printMove "Square White" move1 move2
   if (validchoiceWhite gameState move1 && validMoveWhite gameState move1 move2) then do
     newGameState <- return (playMove gameState move1 move2)
     if checkifcanUpgradeWhite move2 then do
@@ -436,10 +437,10 @@ playerMoveWhite gameState = do
 doubleMoveWhite:: GameState -> Move -> IO GameState
 doubleMoveWhite newGameState (a,b) = do
     let move3 = (a,b)
-    putStrLn ("Player White have to move from  " ++ (show a) ++ " , " ++ (show b))
-    putStrLn "Player White move to"
+    putStrLn ("Square White have to move from  " ++ (show a) ++ " , " ++ (show b))
+    putStrLn "Square White move to"
     move4 <- readMove
-    printMove "Player White" move3 move4
+    printMove "Square White" move3 move4
     if (validchoiceWhite newGameState move3 && validMoveWhite newGameState move3 move4) then do
     newnewGameState <- return (playMove newGameState move3 move4)
     printboard newnewGameState
@@ -456,10 +457,10 @@ doubleMoveWhite newGameState (a,b) = do
 doubleMoveRed:: GameState -> Move -> IO GameState
 doubleMoveRed newGameState (a,b) = do
     let move3 = (a,b)
-    putStrLn ("Player Red have to move from  " ++ (show a) ++ " , " ++ (show b))
-    putStrLn "Player Red move to"
+    putStrLn ("Square Red have to move from  " ++ (show a) ++ " , " ++ (show b))
+    putStrLn "Square Red move to"
     move4 <- readMove
-    printMove "Player Red" move3 move4
+    printMove "Square Red" move3 move4
     if (validchoiceRed newGameState move3 && validMoveRed newGameState move3 move4) then do
     newnewGameState <- return (playMove newGameState move3 move4)
     if checkifcanUpgradeRed move4 then do
@@ -648,7 +649,7 @@ printMove player (row1, column1) (row2, column2) = putStrLn $ player ++ " " ++ "
 
 printboard :: Show a => [[a]] -> IO ()
 printboard (x:y:z:q:a:b:c:d) = do
-    putStrLn $ "  " ++ "1" ++ "  " ++ "2" ++ "  " ++ "3" ++ "  " ++ "4" ++ "  " ++ "5" ++ "  " ++ "6" ++ "  " ++ "7" ++ "  " ++ "8"
+    putStrLn $ "   1" ++ "   2" ++ "   3" ++ "   4" ++ "   5" ++ "   6" ++ "   7" ++ "   8"
     putStrLn $ "1" ++ (show x)
     putStrLn $ "2" ++ (show y)
     putStrLn $ "3" ++ (show z)
