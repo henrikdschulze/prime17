@@ -1,4 +1,0 @@
-\babel@toc {english}{}
-\contentsline {section}{\numberline {1}Introduction}{3}
-\contentsline {section}{\numberline {2}Summary}{4}
-\contentsline {section}{\numberline {3}Usage of Program}{4}
