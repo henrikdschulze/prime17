@@ -27,11 +27,19 @@ Our initial idea was to make the game in a few steps in Haskell. We would first 
 
 
 \begin{figure}
-	\begin{center}
-		\includegraphics[width= 0.4\textwidth]{hej.jpg}
-	\end{center}
+
+  \begin{center}
+  	\includegraphics[width= 0.4\textwidth]{Startboarexample.PNG}
+  \end{center}
 	\caption{A Checkers start board.}
 	\label{fig:Checkers}
+\end{figure}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width= 0.4\textwidth]{start.PNG}
+	\end{center}
+	\caption{A Checkers start board in Haskell.}
+	\label{fig:Ch}
 \end{figure}
 \section{Summary}
 So, what did we accomplish with our code? 
@@ -43,4 +51,23 @@ In the start of the game it is only possible for the red player to make the firs
 Pieces are put out diagonally on the first 3 lines of the board and from here they can only move diagonally. They can only move one step at a time unless they have the possibility to make one or several jumps. The pieces can’t jump outside the board and a piece will be removed once it has been jumped over. The player loses the game when he/she have no more pieces on the board. 
 
 \section{Usage of Program}
+In our game you will get a starting board see Figure \ref{fig:Ch} and from here you can start to play. To start you write a tuple with two numbers in it that represents from where you want to move press enter and then write a new tuple for where you want to move, and press enter again. The first number in the tuple represents the row and the second represents the column.
+
+Example below:
+Player Red move from
+
+(3,1)
+
+Player Red move to
+
+(4,2)
+
+Player Red moves from  (3 , 1)  to  (4 , 2)
+
+You will now get an updated board with the move applied and under the board it will say. “Player white move from” and like this the game will continue. If you try to make 
+Player Red moves from  (3 , 1)  to  (1 , 4)
+Invalid Move. You can only move your own pieces and move diagonally
+Player Red move from
+
+
 \end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.14)  22 FEB 2018 15:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.14)  22 FEB 2018 16:00
 entering extended mode
 **./ProjectCheckers.tex
 (ProjectCheckers.tex
@@ -503,30 +503,35 @@ ckers.toc)
 
 
 [2]
-<hej.jpg, id=13, 245.718pt x 244.5135pt>
-File: hej.jpg Graphic file (type jpg)
-<use hej.jpg>
-Package pdftex.def Info: hej.jpg  used on input line 31.
+<Startboarexample.PNG, id=13, 245.718pt x 244.5135pt>
+File: Startboarexample.PNG Graphic file (type png)
+<use Startboarexample.PNG>
+Package pdftex.def Info: Startboarexample.PNG  used on input line 32.
 (pdftex.def)             Requested size: 155.99762pt x 155.23822pt.
- [3] [4 <./hej.jpg>] (ProjectCheckers.aux) ) 
+<start.PNG, id=15, 209.583pt x 150.5625pt>
+File: start.PNG Graphic file (type png)
+<use start.PNG>
+Package pdftex.def Info: start.PNG  used on input line 39.
+(pdftex.def)             Requested size: 155.99762pt x 112.06924pt.
+ [3] [4 <./Startboarexample.PNG> <./start.PNG>] [5] (ProjectCheckers.aux) ) 
 Here is how much of TeX's memory you used:
- 2533 strings out of 493303
- 32651 string characters out of 3138856
- 97571 words of memory out of 3000000
- 6046 multiletter control sequences out of 15000+200000
+ 2539 strings out of 493303
+ 32788 string characters out of 3138856
+ 97579 words of memory out of 3000000
+ 6051 multiletter control sequences out of 15000+200000
  9476 words of font info for 24 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,6n,25p,645b,253s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\danni\AppData\Local\MiKT
-eX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1200.pk> <C:\Users\danni\AppData\
-Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1728.pk> <C:\Users\dann
-i\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1200.pk> <C:\
-Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm144
-0.pk> <C:\Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi6
-00\ecrm2074.pk>
-Output written on ProjectCheckers.pdf (4 pages, 198392 bytes).
+ <C:
+\Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx12
+00.pk> <C:\Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi
+600\ecbx1728.pk> <C:\Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknap
+pen\ec\dpi600\ecrm1200.pk> <C:\Users\danni\AppData\Local\MiKTeX\2.9\fonts\pk\lj
+four\jknappen\ec\dpi600\ecrm1440.pk> <C:\Users\danni\AppData\Local\MiKTeX\2.9\f
+onts\pk\ljfour\jknappen\ec\dpi600\ecrm2074.pk>
+Output written on ProjectCheckers.pdf (5 pages, 219471 bytes).
 PDF statistics:
- 184 PDF objects out of 1000 (max. 8388607)
+ 196 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
