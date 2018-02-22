@@ -3,7 +3,7 @@ git status -- har jag gjort några förändringar som jag vill ladda upp?
 ./dif -- skillnad mellan min lokala kopia och github
 cat -- linuxkommando för att visa innehållet i en fil
 git pull -- ladda ner allt som skiljer sig mellan GitHub och min lokala version.
-git add -- skapa kopia som kan "commitas".
+git add . -- skapa kopia som kan "commitas".
 git commit -m "new file: D-man/Git.txt" -- commita alla förändringar med meddelande
 git push -- ladda upp allt som finns i min lokala version men inte i GitHub
 shift ins -- klistra in i GitBash
