@@ -460,10 +460,6 @@ makeKingAuxAuxRed all@((y,(c,d)):ys) (r,(s,t))
   | s == 8 = insertAt ("R",(s,t)) (delete (r,(s,t)) all)
   | otherwise = ((y,(c,d)):ys)
 
-
-
-
-
 {- makeKingWhite gameState position
     Upgrades the piece to king if it is a valid transformation.
   PRE: gameState must not be an empty list and the position must be valid. The list must be
@@ -505,27 +501,13 @@ makeKingAuxAuxWhite all@((y,(c,d)):ys) (r,(s,t))
   | s == 1 = insertAt ("W",(s,t)) (delete (r,(s,t)) all)
   | otherwise = ((y,(c,d)):ys)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{- playerMoveRed GameState
+{- playerMoveRed gamestate
     From the current gamestate, gets input from the player for one position the player want to move
     from and one position to move to and prints these to the screen. Prints out the current gamestate
     for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
   RETURNS: IO GameState
-  SIDE EFFECTS: Prints out different gameStates to the screen depending on conditions.
+  SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
 playerMoveRed :: GameState -> IO GameState
@@ -541,23 +523,51 @@ playerMoveRed gameState = do
        newsGameState <- return (makeKingRed newGameState move2)
        printboard newsGameState
        return $ newsGameState
-                                    else do
-                                      printboard newGameState
-                                      if checkPositionRed newGameState move1 move2 then do
-                                         doubleMoveRed newGameState move2 else
-                                         return $ playMove gameState move1 move2
     else do
-      putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
-      playerMoveRed gameState
+      printboard newGameState
+      if checkPositionRed newGameState move1 move2 then do
+         doubleMoveRed newGameState move2 else
+         return $ playMove gameState move1 move2
+      else do
+        putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
+        playerMoveRed gameState
 
-{- playerMoveWhite GameState
+{- doubleMoveRed GameState Move
+    If after a jump, the player is able to jump again, this function forces the player to move
+    the same piece again.
+  PRE: Valid gameState and valid Move
+  RETURNS: IO GameState
+  SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
+  EXAMPLES: -
+-}
+doubleMoveRed:: GameState -> Move -> IO GameState
+doubleMoveRed newGameState (a,b) = do
+    let move3 = (a,b)
+    putStrLn ("Player Red have to move from  " ++ (show a) ++ " , " ++ (show b))
+    putStrLn "Player Red move to"
+    move4 <- readMove
+    printMove "Player Red" move3 move4
+    if (validchoiceRed newGameState move3 && validMoveRed newGameState move3 move4) then do
+    newnewGameState <- return (playMove newGameState move3 move4)
+    if checkIfCanMakeKingRed move4 then do
+      newsGameState <- return (makeKingRed newnewGameState move4)
+      printboard newsGameState
+      return $ newsGameState
+    else do
+      printboard newnewGameState
+      if checkPositionRed newnewGameState move3 move4 then do
+        doubleMoveRed newnewGameState move4 else return $ playMove newGameState move3 move4
+      else do
+        putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
+        doubleMoveRed newGameState (a,b)
+
+{- playerMoveWhite gamestate
     From the current gamestate, gets input from the player for one position the player want to move
-    from and one position to move to and prints these to the screen.
-    Prints out the current gamestate for the player to see. Also checks if certain conditions
-    are met and if so, does those functions.
+    from and one position to move to and prints these to the screen. Prints out the current gamestate
+    for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
   RETURNS: IO GameState
-  SIDE EFFECTS: Prints out different gameStates to the screen depending on conditions.
+  SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
 playerMoveWhite :: GameState -> IO GameState
@@ -572,22 +582,21 @@ playerMoveWhite gameState = do
     if checkIfCanMakeKingWhite move2 then do
        newsGameState <- return (makeKingWhite newGameState move2)
        return $ newsGameState
-                                       else do
-                                          if checkPositionwhite newGameState move1 move2 then do
-                                            printboard newGameState
-                                            doubleMoveWhite newGameState move2 else do
-                                               return $ playMove gameState move1 move2
-  else do
-     putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
-     playerMoveWhite gameState
+    else do
+      if checkPositionwhite newGameState move1 move2 then do
+        printboard newGameState
+        doubleMoveWhite newGameState move2 else do
+           return $ playMove gameState move1 move2
+      else do
+         putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
+         playerMoveWhite gameState
 
 {- doubleMoveWhite GameState Move
-    If after a jump, the player is able to jump again, this functions starts forcing the player
-    to move the same piece.
+    If after a jump, the player is able to jump again, this function forces the player to move
+    the same piece again.
   PRE: Valid gameState and valid Move
   RETURNS: IO GameState
-  SIDE EFFECTS: Prints out different gameStates to the screen depending on conditions
-                and returns the gamestate to the playerMoveWhite function.
+  SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
 doubleMoveWhite:: GameState -> Move -> IO GameState
@@ -598,48 +607,18 @@ doubleMoveWhite newGameState (a,b) = do
     move4 <- readMove
     printMove "Player White" move3 move4
     if (validchoiceWhite newGameState move3 && validMoveWhite newGameState move3 move4) then do
-    newnewGameState <- return (playMove newGameState move3 move4)
-    printboard newnewGameState
-    if checkIfCanMakeKingWhite move4 then do
-    newsGameState <- return (makeKingWhite newnewGameState move4)
-    printboard newsGameState
-    return $ newsGameState
-                                       else do
-    if checkPositionwhite newnewGameState move3 move4 then do
-      doubleMoveWhite newnewGameState move4 else return $ playMove newGameState move3 move4
-    else do
-      putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
-      doubleMoveWhite newGameState (a,b)
-
-{- doubleMoveRed GameState Move
-    If after a jump, the player is able to jump again, this functions starts forcing the player
-    to move the same piece.
-  PRE: Valid gameState and valid Move
-  RETURNS: IO GameState
-  SIDE EFFECTS: Prints out different gameStates to the screen depending on conditions
-                and returns the gamestate to the playerMoveRed function.
-  EXAMPLES: -
--}
-doubleMoveRed:: GameState -> Move -> IO GameState
-doubleMoveRed newGameState (a,b) = do
-    let move3 = (a,b)
-    putStrLn ("Player Red have to move from  " ++ (show a) ++ " , " ++ (show b))
-    putStrLn "Player Red move to"
-    move4 <- readMove
-    printMove "Player Red" move3 move4
-    if (validchoiceRed newGameState move3 && validMoveRed newGameState move3 move4) then do
-    newnewGameState <- return (playMove newGameState move3 move4)
-    if checkIfCanMakeKingRed move4 then do
-    newsGameState <- return (makeKingRed newnewGameState move4)
-    printboard newsGameState
-    return $ newsGameState
-                                else do
-    printboard newnewGameState
-    if checkPositionRed newnewGameState move3 move4 then do
-      doubleMoveRed newnewGameState move4 else return $ playMove newGameState move3 move4
-    else do
-      putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
-      doubleMoveRed newGameState (a,b)
+      newnewGameState <- return (playMove newGameState move3 move4)
+      printboard newnewGameState
+      if checkIfCanMakeKingWhite move4 then do
+        newsGameState <- return (makeKingWhite newnewGameState move4)
+        printboard newsGameState
+        return $ newsGameState
+      else do
+        if checkPositionwhite newnewGameState move3 move4 then do
+          doubleMoveWhite newnewGameState move4 else return $ playMove newGameState move3 move4
+        else do
+          putStrLn "Invalid Move. You can only move your own pieces and move diagonally"
+          doubleMoveWhite newGameState (a,b)
 
 {- readMove
   Reads a move from standard input
