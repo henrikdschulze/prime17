@@ -1,0 +1,21 @@
+Functional Correctness:
+=======================
+Passed Required Test Cases (100.00 %)
+Grade: 5 (100 %%)
+
+Style and Comments:
+===================
+
+Filename is wrong: it should be CompLine.hs but...
+        2017-PKD-ass1-olli0371-hesc0353=G23.hs
+        2017-PKD-ass1-olli0371-hesc0353=G23___.hs
+        2017-PKD-ass1-olli0371-hesc0353=G23_.hs
+        2017-PKD-ass1-olli0371-hesc0353=G23__.hs
+        => which one should I grade? (I took the newest file)
+
+variants are missing
+
+Grade: k
+
+================================================================================
+Total: k (5+k)
