@@ -1,3 +1,12 @@
+{-
+  Uppsala University - 2018 Spring
+  Program Design and Data Structures, 1DL201
+  Project - Checkers in Haskell
+  Copyright 2018 Madelene Alanenpää, Daniel Jönsson & Henke Alfken(Schulze), Group 17
+
+  Inspired by:
+  * The program Nim.hs of lab 15 in this PKD course. (Notably the 'readmove' function.)
+-}
 import Data.Char
 import Control.Monad
 import Control.Exception
@@ -631,7 +640,7 @@ readMove = do
     ((\_ -> do  -- exception handler
     putStrLn "Invalid input. Correct format: (row,column)"
     readMove) :: SomeException -> IO Position)
-  
+
 {- validMoveRed gameState positionFrom positionTo
     Returns True if the move is valid, returns false otherwise.
   PRE: No empty gamestate
@@ -1360,143 +1369,214 @@ checkPositionsAuxAuxWhite (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
       ((m == "r" || m == "R") && dy == ".") then True else False
   | otherwise = if ((p == "r" || p == "R") && dt == ".") || ((m == "r" || m == "R") && dy == ".") ||
       ((a == "r" || a == "R") && dx == ".") || ((s == "r" || s == "R") && dq == ".") then True else False
+-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =--
 
 
+-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =--
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Test Cases
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =--
 
 
+-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =--
+test0 = TestCase $ assertEqual "showPiece-0"
+  ("R") ((showPiece "R"))
 
-test0 = TestCase $ assertEqual "showPiece"
-            ("R") ((showPiece "R"))
+test1 = TestCase $ assertEqual "removePosition-1"
+  (removePosition (concat(addPositionsToGameState [insertPlayers]))) (insertPlayers)
 
-test1 = TestCase $ assertEqual "removePosition"
-            (removePosition (concat(addPositionsToGameState [insertPlayers]))) (insertPlayers)
+test2 = TestCase $ assertEqual "addPositionToGameState-2"
+  ([[("r",(1,1))]]) (addPositionsToGameState [["r"]])
 
-test2 = TestCase $ assertEqual "addPositionToGameState"
-            ([[("r",(1,1))]]) (addPositionsToGameState [["r"]])
+test3 = TestCase $ assertEqual "addPositionToGameState-3"
+  ([[("r",(1,1)),(".",(1,2)),("r",(1,3))]]) (addPositionsToGameState [["r",".","r"]])
 
-test3 = TestCase $ assertEqual "addPositionToGameState"
-            ([[("r",(1,1)),(".",(1,2)),("r",(1,3))]]) (addPositionsToGameState [["r",".","r"]])
+test4 = TestCase $ assertEqual "insertPlayersWhite-4"
+  ([]) (insertPlayersWhite [])
 
-test4 = TestCase $ assertEqual "insertPlayersWhite"
-            ([]) (insertPlayersWhite [])
-            
-test5 = TestCase $ assertEqual "insertPlayersWhite"
-            (["r","w"]) (insertPlayersWhite ["r","."])
-            
-test6 = TestCase $ assertEqual "makeGamestate"
-            ([["r","w"]]) (makeGamestate (insertPlayersWhite ["r","."]))
+test5 = TestCase $ assertEqual "insertPlayersWhite-5"
+  (["r","w"]) (insertPlayersWhite ["r","."])
 
-test7 = TestCase $ assertEqual "checkIfCanMakeKingRed"
-            (True) (checkIfCanMakeKingRed (8,8))
+test6 = TestCase $ assertEqual "makeGamestate-6"
+  ([["r","w"]]) (makeGamestate (insertPlayersWhite ["r","."]))
 
-test8 = TestCase $ assertEqual "checkIfCanMakeKingRed"
-            (False) (checkIfCanMakeKingRed (5,5))
-            
-test9 = TestCase $ assertEqual "checkIfCanMakeKingWhite"
-            (True) (checkIfCanMakeKingWhite (1,4))
-            
-test10 = TestCase $ assertEqual "makeKingRed"
-            (newinput) (makeKingRed input (8,8)) where
-                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","r"]]
-                newinput = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","R"]]
-                
-test11 = TestCase $ assertEqual "makeKingRed"
-            (input) (makeKingRed input (1,1)) where
-                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
-                
-test12 = TestCase $ assertEqual "makeKingWhite"
-            (newinput) (makeKingWhite input (1,1)) where
-                input = [["w",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
-                newinput = [["W",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
-                
-test13 = TestCase $ assertEqual "makeKingWhite"
-            (input) (makeKingWhite input (8,6)) where
-                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
-                
-test14 = TestCase $ assertEqual "validMoveRed"
-            (True) (validMoveRed (makeGamestate insertPlayers) (3,3) (4,4))
-  
-test15 = TestCase $ assertEqual "validMoveRed"
-            (False) (validMoveRed (makeGamestate insertPlayers) (3,3) (6,6))
+test7 = TestCase $ assertEqual "checkIfCanMakeKingRed-7"
+  (True) (checkIfCanMakeKingRed (8,8))
 
-test16 = TestCase $ assertEqual "validJumpRed"
-            (False) (validJumpRed (concat(addPositionsToGameState [insertPlayers])) (3,3) (5,5) (".",(4,4)) (".",(4,2)) ("r",(2,4)) ("r",(2,2)) (".",(5,5)) (".",(5,1)) ("r",(1,5)) ("r",(1,1)))
-            
-test17 = TestCase $ assertEqual "validMoveWhite"
-            (True) (validMoveWhite (makeGamestate insertPlayers) (6,6) (5,5))
+test8 = TestCase $ assertEqual "checkIfCanMakeKingRed-8"
+  (False) (checkIfCanMakeKingRed (5,5))
 
- 
-test18 = TestCase $ assertEqual "validMoveOneStep"
-            (True) (validMoveOneStep (concat (addPositionsToGameState [insertPlayers])) (3,3) (4,4))
+test9 = TestCase $ assertEqual "checkIfCanMakeKingWhite-9"
+  (True) (checkIfCanMakeKingWhite (1,4))
 
-test19 = TestCase $ assertEqual "validMoveOneStep"
-            (False) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,3) (8,8))
+test10 = TestCase $ assertEqual "makeKingRed-10"
+  (output) (makeKingRed input (8,8)) where
+  input =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","r"]]
+  output =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","R"]]
 
-test20 = TestCase $ assertEqual "validMoveOneStep"
-            (True) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,1) (4,2))
-            
-test21 = TestCase $ assertEqual "validJumpWhite"
-            (False) (validJumpWhite (concat(addPositionsToGameState [insertPlayers])) (6,2) (4,4) ("w",(7,3)) ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8)))
+test11 = TestCase $ assertEqual "makeKingRed-11"
+  (input) (makeKingRed input (1,1)) where       -- output same as input
+  input =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
 
-test22 = TestCase $ assertEqual "validPlaceRed"
-            (True) (validPlaceRed (makeGamestate insertPlayers) (3,1)) 
-      
-test23 = TestCase $ assertEqual "validPlaceRed"
-            (False) (validPlaceRed (makeGamestate insertPlayers) (4,7)) 
+test12 = TestCase $ assertEqual "makeKingWhite-12"
+  (output) (makeKingWhite input (1,1)) where
+  input =
+    [["w",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
+  output =
+    [["W",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
 
-            
-test24 = TestCase $ assertEqual "validPlaceWhite"
-            (False) (validPlaceWhite (makeGamestate insertPlayers) (1,3))
+test13 = TestCase $ assertEqual "makeKingWhite-13"
+  (input) (makeKingWhite input (8,6)) where       -- output same as input
+  input =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".","r",".","r",".","r","."],
+     [".",".",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
 
-test25 = TestCase $ assertEqual "validPlaceWhite"
-            (True) (validPlaceWhite (makeGamestate insertPlayers) (8,8))
+test14 = TestCase $ assertEqual "validMoveRed-14"
+  (True) (validMoveRed (makeGamestate insertPlayers) (3,3) (4,4))
+
+test15 = TestCase $ assertEqual "validMoveRed-15"
+  (False) (validMoveRed (makeGamestate insertPlayers) (3,3) (6,6))
+
+test16 = TestCase $ assertEqual "validJumpRed-16"
+  (False) $ validJumpRed (concat(addPositionsToGameState [insertPlayers])) (3,3) (5,5) (".",(4,4))
+    (".",(4,2)) ("r",(2,4)) ("r",(2,2)) (".",(5,5)) (".",(5,1)) ("r",(1,5)) ("r",(1,1))
+
+test17 = TestCase $ assertEqual "validMoveWhite-17"
+  (True) (validMoveWhite (makeGamestate insertPlayers) (6,6) (5,5))
 
 
-test26 = TestCase $ assertEqual "playMove"
-            (input) (playMove (makeGamestate insertPlayers) (3,3) (4,4)) where
-                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".",".",".","r",".","r","."],[".",".",".","r",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+test18 = TestCase $ assertEqual "validMoveOneStep-18"
+  (True) (validMoveOneStep (concat (addPositionsToGameState [insertPlayers])) (3,3) (4,4))
 
-test27 = TestCase $ assertEqual "playMove"
-            (input) (playMove (makeGamestate insertPlayers) (3,3) (4,2)) where
-                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".",".",".","r",".","r","."],[".","r",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]                
+test19 = TestCase $ assertEqual "validMoveOneStep-19"
+  (False) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,3) (8,8))
 
-                
-test28 = TestCase $ assertEqual "insertAt"
-            (input) (insertAt ("r",(0,0)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]) where
-                input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,0)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
-                
-test29 = TestCase $ assertEqual "insertAt"
-            (input) (insertAt ("r",(1,3)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]) where
-                input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
-            
-test30 = TestCase $ assertEqual "findPosition"
-            (1) (findPosition (1,2))
-            
-test31 = TestCase $ assertEqual "findPosition"
-            (56) (findPosition (8,1))
+test20 = TestCase $ assertEqual "validMoveOneStep-20"
+  (True) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,1) (4,2))
 
-test32 = TestCase $ assertEqual "victoryRed"
-            (True) (victoryRed [["r","r"]])
-            
-test33 = TestCase $ assertEqual "victoryRed"
-            (False) (victoryRed [["r",".","r",".","r",".","r","w"]])
+test21 = TestCase $ assertEqual "validJumpWhite-21"
+  (False) $ validJumpWhite (concat(addPositionsToGameState [insertPlayers])) (6,2) (4,4) ("w",(7,3))
+    ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8))
 
-test34 = TestCase $ assertEqual "victoryWhite"
-            (False) (victoryWhite [["r",".","w","w","w",".","w","w"]])
-            
-test35 = TestCase $ assertEqual "victoryWhite"
-            (True) (victoryWhite [[".",".",".",".",".",".",".","."]])
-            
-test36 = TestCase $ assertEqual "checkPositionRed"
-            (False) (checkPositionRed (makeGamestate insertPlayers) (3,3) (4,4))
+test22 = TestCase $ assertEqual "validPlaceRed-22"
+  (True) (validPlaceRed (makeGamestate insertPlayers) (3,1))
 
-test37 = TestCase $ assertEqual "checkPositionWhite"
-            (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
-            
-test38 = TestCase $ assertEqual "checkPositionRed"
-            (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
+test23 = TestCase $ assertEqual "validPlaceRed-23"
+  (False) (validPlaceRed (makeGamestate insertPlayers) (4,7))
 
--- for running all the tests
+
+test24 = TestCase $ assertEqual "validPlaceWhite-24"
+  (False) (validPlaceWhite (makeGamestate insertPlayers) (1,3))
+
+test25 = TestCase $ assertEqual "validPlaceWhite-25"
+  (True) (validPlaceWhite (makeGamestate insertPlayers) (8,8))
+
+
+test26 = TestCase $ assertEqual "playMove-26"
+  (input) (playMove (makeGamestate insertPlayers) (3,3) (4,4)) where
+  input =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".",".",".","r",".","r","."],
+     [".",".",".","r",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
+
+test27 = TestCase $ assertEqual "playMove-27"
+  (input) (playMove (makeGamestate insertPlayers) (3,3) (4,2)) where
+  input =
+    [["r",".","r",".","r",".","r","."],
+     [".","r",".","r",".","r",".","r"],
+     ["r",".",".",".","r",".","r","."],
+     [".","r",".",".",".",".",".","."],
+     [".",".",".",".",".",".",".","."],
+     [".","w",".","w",".","w",".","w"],
+     ["w",".","w",".","w",".","w","."],
+     [".","w",".","w",".","w",".","w"]]
+
+test28 = TestCase $ assertEqual "insertAt-28"
+  (input) (insertAt ("r",(0,0)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5))]) where
+            input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,0)),("r",(1,5))]
+
+test29 = TestCase $ assertEqual "insertAt-29"
+  (input) (insertAt ("r",(1,3)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5))]) where
+            input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),("r",(1,3)),(".",(1,4)),("r",(1,5))]
+
+test30 = TestCase $ assertEqual "findPosition-30"
+  (1) (findPosition (1,2))
+
+test31 = TestCase $ assertEqual "findPosition-31"
+  (56) (findPosition (8,1))
+
+test32 = TestCase $ assertEqual "victoryRed-32"
+  (True) (victoryRed [["r","r"]])
+
+test33 = TestCase $ assertEqual "victoryRed-33"
+  (False) (victoryRed [["r",".","r",".","r",".","r","w"]])
+
+test34 = TestCase $ assertEqual "victoryWhite-34"
+  (False) (victoryWhite [["r",".","w","w","w",".","w","w"]])
+
+test35 = TestCase $ assertEqual "victoryWhite-35"
+  (True) (victoryWhite [[".",".",".",".",".",".",".","."]])
+
+test36 = TestCase $ assertEqual "checkPositionRed-36"
+  (False) (checkPositionRed (makeGamestate insertPlayers) (3,3) (4,4))
+
+test37 = TestCase $ assertEqual "checkPositionWhite-37"
+  (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
+
+test38 = TestCase $ assertEqual "checkPositionRed-38"
+  (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
+
+-- For running all the tests:
 runtests = runTestTT $ TestList [test0, test1, test2, test3, test4, test5, test6, test7, test8, test9,
   test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21,
   test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33,
