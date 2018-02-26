@@ -321,7 +321,7 @@ main = do
 play :: GameState -> IO ()
 play gameState = do
   newGameState <- playerMoveRed gameState
-  if victoryRed newGameState then do
+  if victoryRed newG  ameState then do
     putStrLn "Player Red won!"
     putStrLn ""
     quitPlease
