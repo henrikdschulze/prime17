@@ -24,12 +24,12 @@ data Player = Player Color Type
 data Color = Red | White | None
 -- -- data Color = R | W | r | w | o --TODO!
 
-{- the Type is either Normal, King or NotHere.
+{- the Type is either Normal or King.
   INVARIANT:
-    There are only three types. Lowercase characters represent "Normal" pieces and uppercase characters
+    There are only two types. Lowercase characters represent "Normal" pieces and uppercase characters
     represent "King" pieces, meaning for example that player Red have managed to move one of the pieces
     to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
-    NotHere means that the space is empty, namely ".".
+    
 -}
 data Type = Normal | King | NotHere
 

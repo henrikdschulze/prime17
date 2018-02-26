@@ -5,31 +5,27 @@ import Debug.Trace
 import Data.List
 import Test.HUnit
 
-{- the Player is represented by a color and a type
+{- the Player is represented by a color and a rank
   INVARIANT:
-    There are only three colors and three types because Player None NotHere is there to represent if
-    there is no piece in that position, and that Color None and Type NotHere is there as an edge case.
-    Each Color corresponds to a character and uppercase or lowercase to represent the character's type.
-    Player Red Normal & Player Red King represent Player Red
-    while Player White Normal & Player White King represent Player White.
+    There are only two colors and two ranks.Each Color corresponds to a character and uppercase or
+    lowercase to represent the character's type. Player Red Normal & Player Red King represent Player
+    Red while Player White Normal & Player White King represent Player White.
 -}
 data Player = Player Color Rank
 
-{- the Color is either Red, White or None.
+{- the Color is either Red or White.
   INVARIANT:
-    There are only three colors and each Color corresponds to a character. "r" for Red and "w" for White.
+    There are only two colors and each Color corresponds to a character. "r" for Red and "w" for White.
     These will represent the colors of the pieces one the board. Color must be represented as a String.
-    None is a ".", meaning there is no piece there.
 -}
 data Color = Red | White
 -- -- data Color = R | W | r | w | o --TODO!
 
-{- the Type is either Normal, King or NotHere.
+{- the Rank is either Normal or King.
   INVARIANT:
-    There are only three types. Lowercase characters represent "Normal" pieces and uppercase characters
+    There are only two types. Lowercase characters represent "Normal" pieces and uppercase characters
     represent "King" pieces, meaning for example that player Red have managed to move one of the pieces
     to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
-    NotHere means that the space is empty, namely ".".
 -}
 data Rank = Normal | King
 
