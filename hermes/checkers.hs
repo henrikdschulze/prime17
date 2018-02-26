@@ -13,7 +13,7 @@ import Test.HUnit
     Player Red Normal & Player Red King represent Player Red
     while Player White Normal & Player White King represent Player White.
 -}
-data Player = Player Color Rank
+data Player = Player Color Type
 
 {- the Color is either Red, White or None.
   INVARIANT:
@@ -21,7 +21,7 @@ data Player = Player Color Rank
     These will represent the colors of the pieces one the board. Color must be represented as a String.
     None is a ".", meaning there is no piece there.
 -}
-data Color = Red | White
+data Color = Red | White | None
 -- -- data Color = R | W | r | w | o --TODO!
 
 {- the Type is either Normal, King or NotHere.
@@ -31,7 +31,7 @@ data Color = Red | White
     to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
     NotHere means that the space is empty, namely ".".
 -}
-data Rank = Normal | King
+data Type = Normal | King | NotHere
 
 {- GameState is the board and is represented as a list of strings in a list.
   INVARIANT:
@@ -291,7 +291,7 @@ rows l = [take 8 l] ++ rows (drop 8 l)
 {- genGameState
     Generates the starting game state.
   PRE: None
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: -
   EXAMPLES: -
 -}
@@ -503,7 +503,7 @@ makeKingAuxAuxWhite all@((y,(c,d)):ys) (r,(s,t))
     from and one position to move to and prints these to the screen. Prints out the current game state
     for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -533,7 +533,7 @@ playerMoveRed gameState = do
     If after a jump, the player is able to jump again, this function forces the player to move
     the same piece again.
   PRE: Valid gameState and valid Position
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -546,24 +546,25 @@ doubleMoveRed newGameState (a,b) = do
     printMove "Player Red" move3 move4
     if (validPlaceRed newGameState move3 && validMoveRed newGameState move3 move4) then do
       newnewGameState <- return (playMove newGameState move3 move4)
-    if checkIfCanMakeKingRed move4 then do
-      newsGameState <- return (makeKingRed newnewGameState move4)
-      printboard newsGameState
-      return $ newsGameState
-    else do
-      printboard newnewGameState
-      if checkPositionRed newnewGameState move3 move4 then do
-        doubleMoveRed newnewGameState move4 else return $ playMove newGameState move3 move4
+      if checkIfCanMakeKingRed move4 then do
+        newsGameState <- return (makeKingRed newnewGameState move4)
+        printboard newsGameState
+        return $ newsGameState
       else do
-        putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
-        doubleMoveRed newGameState (a,b)
+        printboard newnewGameState
+        if checkPositionRed newnewGameState move3 move4 then do
+          doubleMoveRed newnewGameState move4
+        else return $ playMove newGameState move3 move4
+    else do
+      putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
+      doubleMoveRed newGameState (a,b)
 
 {- playerMoveWhite gamestate
     From the current game state, gets input from the player for one position the player want to move
     from and one position to move to and prints these to the screen. Prints out the current game state
     for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -595,7 +596,7 @@ playerMoveWhite gameState = do
     If after a jump, the player is able to jump again, this function forces the player to move
     the same piece again.
   PRE: Valid gameState and valid Position
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -633,7 +634,7 @@ readMove = do
     ((\_ -> do  -- exception handler
     putStrLn "Invalid input. Correct format: (row,column)"
     readMove) :: SomeException -> IO Position)
-
+  
 {- validMoveRed gameState positionFrom positionTo
     Returns True if the move is valid, returns false otherwise.
   PRE: No empty gamestate
@@ -753,11 +754,9 @@ validJumpRed ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
 validMoveWhite :: GameState -> Position -> Position -> Bool
 validMoveWhite (x:xs) (u,v) (w,q) = validMoveAuxWhite (concat (addPositionsToGameState (x:xs))) (u,v) (w,q)
 {- validMoveAuxWhite gameStateWithPositionsList positionFrom positionTo
-    Returns True if the move is valid for Player White, returns false
-    move is
-    the position the piece moves from. Second move it the position the player wants to move to.
+    Returns True if the move is valid for Player White, returns false otherwise.
   PRE: Valid move (row 1-8, column 1-8), no numbers outside the board.
-  RETURNS: Bool
+  RETURNS: True if the move is valid for Player White, returns false otherwise.
   SIDE EFFECTS: -
   EXAMPLES:
     validMoveAuxWhite (concat $ addPositionsToGameState (makeGamestate insertPlayersRed)) (7,7) (8,8)
@@ -1309,9 +1308,9 @@ checkPositionWhite (x:xs) (u,v) (w,q)
     | (u,v) == (w+2,q-2) = checkPositionsAuxWhite (concat (addPositionsToGameState (x:xs))) (w,q)
     | otherwise = False
 
-{- checkPositionAuxWhite gameStateWithPositionsList position
-    Checks the positions around the Position
-    and returns True if a jump can be made from that position otherwise False.
+{- checkPositionAuxWhite gameStateWithPositionsList positionO
+    Checks the positions around positionO and returns True if a jump can be made from that position,
+    otherwise False.
   VARIANT: -
   PRE: Moveset within (1-8,1-8) so that it's within the board.
   RETURNS: True if a jump can be made from that position, otherwise False.
@@ -1327,12 +1326,12 @@ checkPositionsAuxWhite ys (w,q) =
   let (m,(i,o)) = ys !! (findPosition (w+1,q-1)) in
   let (a,(b,n)) = ys !! (findPosition (w-1,q+1)) in
   let (s,(f,g)) = ys !! (findPosition (w-1,q-1)) in
-  let (dt,(ro,co)) = ys !! (findPosition (w+2,q+2)) in
+  let (dt,(ro,co))   = ys !! (findPosition (w+2,q+2)) in
   let (dy,(row,col)) = ys !! (findPosition (w+2,q-2)) in
-  let (dx,(ry,cy)) = ys !! (findPosition (w-2,q+2)) in
-  let (dq,(ru,cu)) = ys !! (findPosition (w-2,q-2)) in
+  let (dx,(ry,cy))   = ys !! (findPosition (w-2,q+2)) in
+  let (dq,(ru,cu))   = ys !! (findPosition (w-2,q-2)) in
   checkPositionsAuxAuxWhite (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
-  (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
+    (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
 {- checkWhite (String,Position) (String,Position) (String,Position) (String,Position)
  (String,Position) (String,Position) (String,Position) (String,Position) (String,Position)
     Checks the positions around the first (String,Position)
@@ -1345,6 +1344,9 @@ checkPositionsAuxWhite ys (w,q) =
   checkWhite ("w",(6,2)) ("w",(7,3)) ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8))
     == False
 -}
+checkPositionsAuxAuxWhite :: (String,Position) -> (String,Position) -> (String,Position)
+      -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position)
+      -> (String,Position) -> (String,Position) -> Bool
 checkPositionsAuxAuxWhite (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
  (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
   | (x == 1 || x == 2) && (j == 1 || j == 2) = if ((p == "r" || p == "R") && dt == ".") then True else False

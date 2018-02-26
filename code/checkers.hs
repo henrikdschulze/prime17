@@ -3,6 +3,7 @@ import Control.Monad
 import Control.Exception
 import Debug.Trace
 import Data.List
+import Test.HUnit
 
 {- the Player is represented by a color and a type
   INVARIANT:
@@ -12,7 +13,7 @@ import Data.List
     Player Red Normal & Player Red King represent Player Red
     while Player White Normal & Player White King represent Player White.
 -}
-data Player = Player Color Type
+data Player = Player Color Rank
 
 {- the Color is either Red, White or None.
   INVARIANT:
@@ -20,8 +21,7 @@ data Player = Player Color Type
     These will represent the colors of the pieces one the board. Color must be represented as a String.
     None is a ".", meaning there is no piece there.
 -}
-data Color = Red | White | None
--- -- data Color = R | W | r | w | o --TODO!
+data Color = Red | White
 
 {- the Type is either Normal, King or NotHere.
   INVARIANT:
@@ -30,7 +30,7 @@ data Color = Red | White | None
     to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
     NotHere means that the space is empty, namely ".".
 -}
-data Type = Normal | King | NotHere
+data Rank = Normal | King
 
 {- GameState is the board and is represented as a list of strings in a list.
   INVARIANT:
@@ -83,7 +83,6 @@ readPiece (Player Red Normal) = "r"
 readPiece (Player Red King) = "R"
 readPiece (Player White Normal) = "w"
 readPiece (Player White King) = "W"
-readPiece (Player None NotHere) = "."
 
 {- showPiece String
     Takes a string and returns the same string. Useful when you are not sure
@@ -103,7 +102,6 @@ showPiece "w" = readPiece (Player White Normal)
 showPiece "W" = readPiece (Player White King)
 showPiece "r" = readPiece (Player Red Normal)
 showPiece "R" = readPiece (Player Red King)
-showPiece "." = readPiece (Player None NotHere)
 
 {- emptyBoard
     Makes an "empty board" with 64 elements. It's filled with "." to signify that there are
@@ -140,7 +138,7 @@ emptyBoard = replicate 64 "."
 -}
 removePosition :: GameStateWithPositionsList -> List
 removePosition [] = []
-removePosition ((x,(a,b)):xs) = [x] ++ removePosition xs
+removePosition xs = map fst xs
 
 {- addPositionsToGameState gameState
     Adds positions to the GameState. Row number is the first number and goes from 1 to 8.
@@ -208,7 +206,7 @@ insertPlayers = let (x:y:xs) = emptyBoard in
       ".",".",".",".",".",".",".",".",
       ".",".",".",".",".",".",".","."]
 -}
-insertPlayersRed :: (Ord a, Num a) => [String] -> (Player -> String) -> Player -> a -> [String]
+insertPlayersRed :: List -> (Player -> String) -> Player -> Int -> List
 insertPlayersRed [] _ _ _ = []
 insertPlayersRed (x:y:xs) readPiece (Player Red Normal) (num)
   | num <= 4 = (readPiece (Player Red Normal)):y:(insertPlayersRed xs readPiece (Player Red Normal) (num+1))
@@ -223,7 +221,7 @@ insertPlayersRed (x:y:xs) readPiece (Player Red Normal) (num)
   SIDE EFFECTS: -
   EXAMPLES:
     insertPlayersWhite ["r",".","r"]
-      *** Exception: checkers.hs:(203,5)-(208,59): Non-exhaustive patterns in function insertWhitePlayersAux
+      *** Exception: checkers.hs:(203,5)-(208,59): Non-exhaustive patterns in function insertPlayersAuxWhite
     insertPlayersWhite emptyBoard
   == [".",".",".",".",".",".",".",".",
       ".",".",".",".",".",".",".",".",
@@ -235,14 +233,14 @@ insertPlayersRed (x:y:xs) readPiece (Player Red Normal) (num)
       ".","w",".","w",".","w",".","w"]
 -}
 insertPlayersWhite:: List -> List
-insertPlayersWhite xs = reverse(insertWhitePlayersAux (reverse xs) readPiece (Player White Normal) 1)
-{- insertWhitePlayersAux List readPiece Player Int
+insertPlayersWhite xs = reverse(insertPlayersAuxWhite (reverse xs) readPiece (Player White Normal) 1)
+{- insertPlayersAuxWhite List readPiece Player Int
     Insert the player White pieces into the empty list as strings.
   PRE: List must have an even number of elements
   RETURNS: List
   SIDE EFFECTS: -
   EXAMPLES:
-    insertWhitePlayersAux emptyBoard readPiece (Player White Normal) 1
+    insertPlayersAuxWhite emptyBoard readPiece (Player White Normal) 1
   == ["w",".","w",".","w",".","w",".",
       ".","w",".","w",".","w",".","w",
       "w",".","w",".","w",".","w",".",
@@ -252,15 +250,15 @@ insertPlayersWhite xs = reverse(insertWhitePlayersAux (reverse xs) readPiece (Pl
       ".",".",".",".",".",".",".",".",
       ".",".",".",".",".",".",".","."]
 -}
-insertWhitePlayersAux :: (Ord a, Num a) => [String] -> (Player -> String) -> Player -> a -> [String]
-insertWhitePlayersAux [] _ _ _ = []
-insertWhitePlayersAux (x:y:ys) readPiece (Player White Normal) (num)
+insertPlayersAuxWhite :: List -> (Player -> String) -> Player -> Int -> List
+insertPlayersAuxWhite [] _ _ _ = []
+insertPlayersAuxWhite (x:y:ys) readPiece (Player White Normal) (num)
   | num <= 4            = (readPiece (Player White Normal)):y:
-      (insertWhitePlayersAux ys readPiece (Player White Normal) (num+1))
+      (insertPlayersAuxWhite ys readPiece (Player White Normal) (num+1))
   | num > 4 && num <= 8 = y:(readPiece (Player White Normal)):
-      (insertWhitePlayersAux ys readPiece (Player White Normal) (num+1))
+      (insertPlayersAuxWhite ys readPiece (Player White Normal) (num+1))
   | num > 8 && num < 12 = (readPiece (Player White Normal)):y:
-      (insertWhitePlayersAux ys readPiece (Player White Normal) (num+1))
+      (insertPlayersAuxWhite ys readPiece (Player White Normal) (num+1))
   | num == 12           = (readPiece (Player White Normal)):y:ys
 
 {- makeGamestate listOrig
@@ -290,7 +288,7 @@ rows l = [take 8 l] ++ rows (drop 8 l)
 {- genGameState
     Generates the starting game state.
   PRE: None
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: -
   EXAMPLES: -
 -}
@@ -309,6 +307,7 @@ main :: IO ()
 main = do
   putStrLn "Welcome to Checkers."
   gameState <- genGameState
+  printboard gameState
   play gameState
 
 {- play
@@ -322,7 +321,6 @@ main = do
 -}
 play :: GameState -> IO ()
 play gameState = do
-  printboard gameState
   newGameState <- playerMoveRed gameState
   if victoryRed newGameState then do
     putStrLn "Player Red won!"
@@ -502,7 +500,7 @@ makeKingAuxAuxWhite all@((y,(c,d)):ys) (r,(s,t))
     from and one position to move to and prints these to the screen. Prints out the current game state
     for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -532,7 +530,7 @@ playerMoveRed gameState = do
     If after a jump, the player is able to jump again, this function forces the player to move
     the same piece again.
   PRE: Valid gameState and valid Position
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -544,25 +542,26 @@ doubleMoveRed newGameState (a,b) = do
     move4 <- readMove
     printMove "Player Red" move3 move4
     if (validPlaceRed newGameState move3 && validMoveRed newGameState move3 move4) then do
-    newnewGameState <- return (playMove newGameState move3 move4)
-    if checkIfCanMakeKingRed move4 then do
-      newsGameState <- return (makeKingRed newnewGameState move4)
-      printboard newsGameState
-      return $ newsGameState
-    else do
-      printboard newnewGameState
-      if checkPositionRed newnewGameState move3 move4 then do
-        doubleMoveRed newnewGameState move4 else return $ playMove newGameState move3 move4
+      newnewGameState <- return (playMove newGameState move3 move4)
+      if checkIfCanMakeKingRed move4 then do
+        newsGameState <- return (makeKingRed newnewGameState move4)
+        printboard newsGameState
+        return $ newsGameState
       else do
-        putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
-        doubleMoveRed newGameState (a,b)
+        printboard newnewGameState
+        if checkPositionRed newnewGameState move3 move4 then do
+          doubleMoveRed newnewGameState move4
+        else return $ playMove newGameState move3 move4
+    else do
+      putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
+      doubleMoveRed newGameState (a,b)
 
 {- playerMoveWhite gamestate
     From the current game state, gets input from the player for one position the player want to move
     from and one position to move to and prints these to the screen. Prints out the current game state
     for the player to see. Also checks if certain conditions are met and if so, does those functions.
   PRE: Valid gameState
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -577,21 +576,24 @@ playerMoveWhite gameState = do
     newGameState <- return (playMove gameState move1 move2)
     if checkIfCanMakeKingWhite move2 then do
        newsGameState <- return (makeKingWhite newGameState move2)
+       printboard newsGameState
        return $ newsGameState
     else do
       if checkPositionWhite newGameState move1 move2 then do
         printboard newGameState
-        doubleMoveWhite newGameState move2 else do
-           return $ playMove gameState move1 move2
+        doubleMoveWhite newGameState move2
       else do
-         putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
-         playerMoveWhite gameState
+        printboard newGameState
+        return $ playMove gameState move1 move2
+  else do
+    putStrLn "Invalid Position. You can only move your own pieces and move diagonally"
+    playerMoveWhite gameState
 
 {- doubleMoveWhite gameState position
     If after a jump, the player is able to jump again, this function forces the player to move
     the same piece again.
   PRE: Valid gameState and valid Position
-  RETURNS: IO gameState
+  RETURNS: -
   SIDE EFFECTS: Prints out the current game state and messages depending on some conditions.
   EXAMPLES: -
 -}
@@ -629,7 +631,7 @@ readMove = do
     ((\_ -> do  -- exception handler
     putStrLn "Invalid input. Correct format: (row,column)"
     readMove) :: SomeException -> IO Position)
-
+  
 {- validMoveRed gameState positionFrom positionTo
     Returns True if the move is valid, returns false otherwise.
   PRE: No empty gamestate
@@ -749,11 +751,9 @@ validJumpRed ys (u,v) (w,q) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
 validMoveWhite :: GameState -> Position -> Position -> Bool
 validMoveWhite (x:xs) (u,v) (w,q) = validMoveAuxWhite (concat (addPositionsToGameState (x:xs))) (u,v) (w,q)
 {- validMoveAuxWhite gameStateWithPositionsList positionFrom positionTo
-    Returns True if the move is valid for Player White, returns false
-    move is
-    the position the piece moves from. Second move it the position the player wants to move to.
+    Returns True if the move is valid for Player White, returns false otherwise.
   PRE: Valid move (row 1-8, column 1-8), no numbers outside the board.
-  RETURNS: Bool
+  RETURNS: True if the move is valid for Player White, returns false otherwise.
   SIDE EFFECTS: -
   EXAMPLES:
     validMoveAuxWhite (concat $ addPositionsToGameState (makeGamestate insertPlayers)) (7,7) (8,8)
@@ -1085,7 +1085,7 @@ insertatAux (r,(x,y)) ((d,(f,(g,h))):ys) ((a,(b,c)):xs) position
     findPosition (7,8)
       == 55
 -}
-findPosition :: (Eq a1, Num a1, Num a2) => (a1, a2) -> a2
+findPosition :: Position -> Int
 findPosition (b,c)
     | b == 1 = 0 + c-1
     | b == 2 = 8 + c-1
@@ -1305,33 +1305,46 @@ checkPositionWhite (x:xs) (u,v) (w,q)
     | (u,v) == (w+2,q-2) = checkPositionsAuxWhite (concat (addPositionsToGameState (x:xs))) (w,q)
     | otherwise = False
 
+{- checkPositionAuxWhite gameStateWithPositionsList positionO
+    Checks the positions around positionO and returns True if a jump can be made from that position,
+    otherwise False.
+  VARIANT: -
+  PRE: Moveset within (1-8,1-8) so that it's within the board.
+  RETURNS: True if a jump can be made from that position, otherwise False.
+  SIDE EFFECTS: -
+  EXAMPLES:
+    checkPositionAuxWhite (concat $ addPositionsToGameState (makeGamestate insertPlayers)) (6,4)
+      == True
+-}
 checkPositionsAuxWhite ::GameStateWithPositionsList -> Position -> Bool
 checkPositionsAuxWhite ys (w,q) =
-  let (hea:tai) = ys in
   let (z,(x,j)) = ys !! (findPosition (w,q)) in
   let (p,(l,e)) = ys !! (findPosition (w+1,q+1)) in
   let (m,(i,o)) = ys !! (findPosition (w+1,q-1)) in
   let (a,(b,n)) = ys !! (findPosition (w-1,q+1)) in
   let (s,(f,g)) = ys !! (findPosition (w-1,q-1)) in
-  let (dt,(ro,co)) = ys !! (findPosition (w+2,q+2)) in
+  let (dt,(ro,co))   = ys !! (findPosition (w+2,q+2)) in
   let (dy,(row,col)) = ys !! (findPosition (w+2,q-2)) in
-  let (dx,(ry,cy)) = ys !! (findPosition (w-2,q+2)) in
-  let (dq,(ru,cu)) = ys !! (findPosition (w-2,q-2)) in
-  checkPositionsAuxAuxWhite (hea:tai) (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
-  (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
+  let (dx,(ry,cy))   = ys !! (findPosition (w-2,q+2)) in
+  let (dq,(ru,cu))   = ys !! (findPosition (w-2,q-2)) in
+  checkPositionsAuxAuxWhite (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
+    (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
 {- checkWhite (String,Position) (String,Position) (String,Position) (String,Position)
  (String,Position) (String,Position) (String,Position) (String,Position) (String,Position)
     Checks the positions around the first (String,Position)
     and returns True if a jump can be made from that position otherwise False.
   VARIANT: -
   PRE: Moveset within (1-8,1-8) so that it's within the board.
-  RETURNS: True if a jump can be made from that position otherwise False.
+  RETURNS: True if a jump can be made from that position, otherwise False.
   SIDE EFFECTS: -
   EXAMPLE:
   checkWhite ("w",(6,2)) ("w",(7,3)) ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8))
     == False
 -}
-checkPositionsAuxAuxWhite (hea:tai) (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
+checkPositionsAuxAuxWhite :: (String,Position) -> (String,Position) -> (String,Position)
+      -> (String,Position) -> (String,Position) -> (String,Position) -> (String,Position)
+      -> (String,Position) -> (String,Position) -> Bool
+checkPositionsAuxAuxWhite (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(f,g))
  (dt,(ro,co)) (dy,(row,col)) (dx,(ry,cy)) (dq,(ru,cu))
   | (x == 1 || x == 2) && (j == 1 || j == 2) = if ((p == "r" || p == "R") && dt == ".") then True else False
   | (x == 1 || x == 2) && (j == 7 || j == 8) = if ((m == "r" || m == "R") && dy == ".") then True else False
@@ -1347,3 +1360,144 @@ checkPositionsAuxAuxWhite (hea:tai) (z,(x,j)) (p,(l,e)) (m,(i,o)) (a,(b,n)) (s,(
       ((m == "r" || m == "R") && dy == ".") then True else False
   | otherwise = if ((p == "r" || p == "R") && dt == ".") || ((m == "r" || m == "R") && dy == ".") ||
       ((a == "r" || a == "R") && dx == ".") || ((s == "r" || s == "R") && dq == ".") then True else False
+
+
+
+
+
+test0 = TestCase $ assertEqual "showPiece"
+            ("R") ((showPiece "R"))
+
+test1 = TestCase $ assertEqual "removePosition"
+            (removePosition (concat(addPositionsToGameState [insertPlayers]))) (insertPlayers)
+
+test2 = TestCase $ assertEqual "addPositionToGameState"
+            ([[("r",(1,1))]]) (addPositionsToGameState [["r"]])
+
+test3 = TestCase $ assertEqual "addPositionToGameState"
+            ([[("r",(1,1)),(".",(1,2)),("r",(1,3))]]) (addPositionsToGameState [["r",".","r"]])
+
+test4 = TestCase $ assertEqual "insertPlayersWhite"
+            ([]) (insertPlayersWhite [])
+            
+test5 = TestCase $ assertEqual "insertPlayersWhite"
+            (["r","w"]) (insertPlayersWhite ["r","."])
+            
+test6 = TestCase $ assertEqual "makeGamestate"
+            ([["r","w"]]) (makeGamestate (insertPlayersWhite ["r","."]))
+
+test7 = TestCase $ assertEqual "checkIfCanMakeKingRed"
+            (True) (checkIfCanMakeKingRed (8,8))
+
+test8 = TestCase $ assertEqual "checkIfCanMakeKingRed"
+            (False) (checkIfCanMakeKingRed (5,5))
+            
+test9 = TestCase $ assertEqual "checkIfCanMakeKingWhite"
+            (True) (checkIfCanMakeKingWhite (1,4))
+            
+test10 = TestCase $ assertEqual "makeKingRed"
+            (newinput) (makeKingRed input (8,8)) where
+                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","r"]]
+                newinput = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","R"]]
+                
+test11 = TestCase $ assertEqual "makeKingRed"
+            (input) (makeKingRed input (1,1)) where
+                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+                
+test12 = TestCase $ assertEqual "makeKingWhite"
+            (newinput) (makeKingWhite input (1,1)) where
+                input = [["w",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+                newinput = [["W",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+                
+test13 = TestCase $ assertEqual "makeKingWhite"
+            (input) (makeKingWhite input (8,6)) where
+                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".","r",".","r",".","r","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+                
+test14 = TestCase $ assertEqual "validMoveRed"
+            (True) (validMoveRed (makeGamestate insertPlayers) (3,3) (4,4))
+  
+test15 = TestCase $ assertEqual "validMoveRed"
+            (False) (validMoveRed (makeGamestate insertPlayers) (3,3) (6,6))
+
+test16 = TestCase $ assertEqual "validJumpRed"
+            (False) (validJumpRed (concat(addPositionsToGameState [insertPlayers])) (3,3) (5,5) (".",(4,4)) (".",(4,2)) ("r",(2,4)) ("r",(2,2)) (".",(5,5)) (".",(5,1)) ("r",(1,5)) ("r",(1,1)))
+            
+test17 = TestCase $ assertEqual "validMoveWhite"
+            (True) (validMoveWhite (makeGamestate insertPlayers) (6,6) (5,5))
+
+ 
+test18 = TestCase $ assertEqual "validMoveOneStep"
+            (True) (validMoveOneStep (concat (addPositionsToGameState [insertPlayers])) (3,3) (4,4))
+
+test19 = TestCase $ assertEqual "validMoveOneStep"
+            (False) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,3) (8,8))
+
+test20 = TestCase $ assertEqual "validMoveOneStep"
+            (True) (validMoveOneStep (concat(addPositionsToGameState [insertPlayers])) (3,1) (4,2))
+            
+test21 = TestCase $ assertEqual "validJumpWhite"
+            (False) (validJumpWhite (concat(addPositionsToGameState [insertPlayers])) (6,2) (4,4) ("w",(7,3)) ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8)))
+
+test22 = TestCase $ assertEqual "validPlaceRed"
+            (True) (validPlaceRed (makeGamestate insertPlayers) (3,1)) 
+      
+test23 = TestCase $ assertEqual "validPlaceRed"
+            (False) (validPlaceRed (makeGamestate insertPlayers) (4,7)) 
+
+            
+test24 = TestCase $ assertEqual "validPlaceWhite"
+            (False) (validPlaceWhite (makeGamestate insertPlayers) (1,3))
+
+test25 = TestCase $ assertEqual "validPlaceWhite"
+            (True) (validPlaceWhite (makeGamestate insertPlayers) (8,8))
+
+
+test26 = TestCase $ assertEqual "playMove"
+            (input) (playMove (makeGamestate insertPlayers) (3,3) (4,4)) where
+                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".",".",".","r",".","r","."],[".",".",".","r",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]
+
+test27 = TestCase $ assertEqual "playMove"
+            (input) (playMove (makeGamestate insertPlayers) (3,3) (4,2)) where
+                input = [["r",".","r",".","r",".","r","."],[".","r",".","r",".","r",".","r"],["r",".",".",".","r",".","r","."],[".","r",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".","w",".","w",".","w",".","w"],["w",".","w",".","w",".","w","."],[".","w",".","w",".","w",".","w"]]                
+
+                
+test28 = TestCase $ assertEqual "insertAt"
+            (input) (insertAt ("r",(0,0)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]) where
+                input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(0,0)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
+                
+test29 = TestCase $ assertEqual "insertAt"
+            (input) (insertAt ("r",(1,3)) [("r",(1,1)),(".",(1,2)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]) where
+                input = [("r",(1,1)),(".",(1,2)),("r",(1,3)),("r",(1,3)),(".",(1,4)),("r",(1,5)),(".",(1,6)),("r",(1,7)),(".",(1,8))]
+            
+test30 = TestCase $ assertEqual "findPosition"
+            (1) (findPosition (1,2))
+            
+test31 = TestCase $ assertEqual "findPosition"
+            (56) (findPosition (8,1))
+
+test32 = TestCase $ assertEqual "victoryRed"
+            (True) (victoryRed [["r","r"]])
+            
+test33 = TestCase $ assertEqual "victoryRed"
+            (False) (victoryRed [["r",".","r",".","r",".","r","w"]])
+
+test34 = TestCase $ assertEqual "victoryWhite"
+            (False) (victoryWhite [["r",".","w","w","w",".","w","w"]])
+            
+test35 = TestCase $ assertEqual "victoryWhite"
+            (True) (victoryWhite [[".",".",".",".",".",".",".","."]])
+            
+test36 = TestCase $ assertEqual "checkPositionRed"
+            (False) (checkPositionRed (makeGamestate insertPlayers) (3,3) (4,4))
+
+test37 = TestCase $ assertEqual "checkPositionWhite"
+            (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
+            
+test38 = TestCase $ assertEqual "checkPositionRed"
+            (False) (checkPositionWhite (makeGamestate insertPlayers) (6,6) (8,7))
+
+-- for running all the tests
+runtests = runTestTT $ TestList [test0, test1, test2, test3, test4, test5, test6, test7, test8, test9,
+  test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21,
+  test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33,
+  test34, test35, test36, test37, test38]
