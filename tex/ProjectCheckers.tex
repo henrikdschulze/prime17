@@ -80,7 +80,7 @@ If you have possibility to make several jumps with one piece you have to do that
 \end{center}
 
 
-If a player moves over the board to the other side it will be upgraded to a queen and that will be representet with a capital r or a capital w, see next page where a red piece have moved to the other side, position (8,6).
+If a player moves over the board to the other side it will be upgraded to a queen and that will be represented with a capital r or a capital w, see next page where a red piece have moved to the other side, position (8,6).
 
 \begin{center}
 	\includegraphics[width= 0.4\textwidth]{queen.PNG}
@@ -108,7 +108,7 @@ If you write your move in the wrong format you will get a message that says
 
 \section{Program Documentation}
 \subsection{Description of data structures}
-The data types on the next page are the ones we have defined and use for our checkers game in Haskell. As descibed earlier in the report the pieces in Checkers are either kings or a pawns that are red or white so we needed some data types that could help us represent this on our board.
+The data types on the next page are the ones we have defined and use for our checkers game in Haskell. As described earlier in the report the pieces in Checkers are either kings or a pawns that are red or white so we needed some data types that could help us represent this on our board.
 \newpage\textbf{data Player = Player Color Type}
 
 \textbf{data Color = Red | White}
@@ -123,6 +123,11 @@ Since we made our empty board as a list of 64 ".", we didn't need to have data t
 We use read- and showPiece in different funtions in our code like in insertPlayer where we use readPiece.
 
 \subsection{Description of algorithms and functions}
+\textbf{\large {main}}
+\\
+Description: Generates the starting board for the players and prints it out in the terminal.
+It also displays the message "Welcome to Checkers"
+\\
 
 \section{Known Shortcomings}
 We did not manage to implement all the things that we had as goals such as creating a computer player and making the game available with Gloss graphics.

@@ -13,7 +13,7 @@ import Test.HUnit
     Player Red Normal & Player Red King represent Player Red
     while Player White Normal & Player White King represent Player White.
 -}
-data Player = Player Color Type
+data Player = Player Color Rank
 
 {- the Color is either Red, White or None.
   INVARIANT:
@@ -21,7 +21,7 @@ data Player = Player Color Type
     These will represent the colors of the pieces one the board. Color must be represented as a String.
     None is a ".", meaning there is no piece there.
 -}
-data Color = Red | White | None
+data Color = Red | White
 -- -- data Color = R | W | r | w | o --TODO!
 
 {- the Type is either Normal, King or NotHere.
@@ -31,7 +31,7 @@ data Color = Red | White | None
     to the last row. "r" for Red Normal, "R" for Red King and "w" for White Normal and "W" for White King.
     NotHere means that the space is empty, namely ".".
 -}
-data Type = Normal | King | NotHere
+data Rank = Normal | King
 
 {- GameState is the board and is represented as a list of strings in a list.
   INVARIANT:
