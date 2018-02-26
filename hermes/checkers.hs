@@ -1314,7 +1314,7 @@ checkPositionWhite (x:xs) (u,v) (w,q)
     and returns True if a jump can be made from that position otherwise False.
   VARIANT: -
   PRE: Moveset within (1-8,1-8) so that it's within the board.
-  RETURNS: True if a jump can be made from that position otherwise False.
+  RETURNS: True if a jump can be made from that position, otherwise False.
   SIDE EFFECTS: -
   EXAMPLES:
     checkPositionAuxWhite (concat $ addPositionsToGameState (makeGamestate insertPlayersRed)) (6,4)
@@ -1339,7 +1339,7 @@ checkPositionsAuxWhite ys (w,q) =
     and returns True if a jump can be made from that position otherwise False.
   VARIANT: -
   PRE: Moveset within (1-8,1-8) so that it's within the board.
-  RETURNS: True if a jump can be made from that position otherwise False.
+  RETURNS: True if a jump can be made from that position, otherwise False.
   SIDE EFFECTS: -
   EXAMPLE:
   checkWhite ("w",(6,2)) ("w",(7,3)) ("w",(7,1)) (".",(5,3)) (".",(5,1)) ("w",(8,4)) (".",(7,8)) (".",(4,4)) (".",(3,8))
