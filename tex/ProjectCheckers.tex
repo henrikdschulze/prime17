@@ -107,6 +107,22 @@ If you write your move in the wrong format you will get a message that says
 
 
 \section{Program Documentation}
+\subsection{Description of data structures}
+The data types on the next page are the ones we have defined and use for our checkers game in Haskell. As descibed earlier in the report the pieces in Checkers are either kings or a pawns that are red or white so we needed some data types that could help us represent this on our board.
+\newpage\textbf{data Player = Player Color Type}
+
+\textbf{data Color = Red | White}
+
+\textbf{data Rank?? = Normal | King}
+
+Since we made our empty board as a list of 64 ".", we didn't need to have data types for representing "." on the board. In the code we use our data types in functions that reads and shows our Players, see below. 
+
+
+\includegraphics[width= 0.4\textwidth]{read.PNG}  \includegraphics[width= 0.5\textwidth]{show.PNG}
+
+We use read- and showPiece in different funtions in our code like in insertPlayer where we use readPiece.
+
+\subsection{Description of algorithms and functions}
 
 \section{Known Shortcomings}
 We did not manage to implement all the things that we had as goals such as creating a computer player and making the game available with Gloss graphics.
