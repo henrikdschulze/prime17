@@ -129,15 +129,35 @@ Description: Generates the starting board for the players and prints it out in t
 It also displays the message "Welcome to Checkers"
 
 
-Makeking
-checkposition
-Printboard\\
+Make king
 
-\textbf{\large {Victory}}\\
-Description: victoryRed and victoryWhite check after every move if red or white player have won the game. It does this by using victoryAuxRed and victoryAuxWhite 
-play move
+\textbf{\Large{Printboard}}
+
+\textbf{Description}
+Printboard takes a gamestate as argument and returns IO (). It Prints out the board the way it looks right now. 
+
+\textbf{Step By Step}
+1) Printboard takes 
+
+
+
+\textbf{\large {Victory}}
+
+\textbf{Description}
+
+victoryRed and victoryWhite takes GameState as argument and returns a Bool. victoryRed checks if there are white players in Gamestate and returns a Bool and victoryWhite does the same but for red players. Play calls the Victoryfunctions after every move in the game and if VictoryRed or VictoryWhite is True it will put the String "Player Red won!" or "Player white won!"
+
+\textbf{Step By Step}
+
+The victory functions concat GameState to one list and are then using victoryAuxRed and victoryAuxWhite to check for a Bool value. The victoryAuxfunctions takes a list as argument and returns a Bool.
+
+1) victoryAux- checks if the list is empty and returns True if that is the case, this is the base case. \\
+2) If it's not an empty list victoryAuxRed checks if the head (y) of the list (y:ys) == "w" || == "W". VictoryAuxWhite does the same but with red pieces.\\
+3) If the second step returns False the victuryAux functions continues with the tail (ys) of the list.\\
+4) If the victoryAuxfuntions returns true it stops and the functions play will print "Player Red won!" or "Player white won!"
+
 Validplace
-double move
+
 
 \section{Known Shortcomings}
 We did not manage to implement all the things that we had as goals such as creating a computer player and making the game available with Gloss graphics.
